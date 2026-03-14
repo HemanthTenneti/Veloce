@@ -1,0 +1,341 @@
+{
+  "info": {
+    "_postman_id": "autocrm-api-collection",
+    "name": "AutoCRM API",
+    "description": "Collection for testing AutoCRM backend API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vehicles",
+      "item": [
+        {
+          "name": "Create Vehicle",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"make\": \"Toyota\",\n  \"model\": \"Camry\",\n  \"year\": 2023,\n  \"vin\": \"4T1BF1EK4CU123456\",\n  \"mileage\": 15000,\n  \"price\": 28500,\n  \"description\": \"Like new condition, full service history\",\n  \"status\": \"Available\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vehicles"]
+            }
+          }
+        },
+        {
+          "name": "Get All Vehicles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vehicles"]
+            }
+          }
+        },
+        {
+          "name": "Get All Vehicles (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles?status=Available&make=Toyota&page=1&pageSize=10&sortBy=year&sortOrder=desc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vehicles"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "Available"
+                },
+                {
+                  "key": "make",
+                  "value": "Toyota"
+                },
+                {
+                  "key": "model",
+                  "value": "Camry",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "year"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                },
+                {
+                  "key": "search",
+                  "value": "Toyota",
+                  "disabled": true
+                },
+                {
+                  "key": "minYear",
+                  "value": "2020",
+                  "disabled": true
+                },
+                {
+                  "key": "maxYear",
+                  "value": "2024",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "20000",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "30000",
+                  "disabled": true
+                },
+                {
+                  "key": "minMileage",
+                  "value": "10000",
+                  "disabled": true
+                },
+                {
+                  "key": "maxMileage",
+                  "value": "50000",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Vehicle by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{vehicle_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vehicles", "{{vehicle_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Vehicle",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Sold\",\n  \"mileage\": 16000,\n  \"price\": 27500\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{vehicle_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vehicles", "{{vehicle_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Vehicle",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vehicles/{{vehicle_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vehicles", "{{vehicle_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Leads",
+      "item": [
+        {
+          "name": "Create Lead",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"+1-555-0123\",\n  \"vehicleId\": \"vehicle-123\",\n  \"message\": \"Interested in the Toyota Camry 2023\",\n  \"source\": \"website\",\n  \"status\": \"New\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/leads",
+              "host": ["{{base_url}}"],
+              "path": ["api", "leads"]
+            }
+          }
+        },
+        {
+          "name": "Get All Leads",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/leads",
+              "host": ["{{base_url}}"],
+              "path": ["api", "leads"]
+            }
+          }
+        },
+        {
+          "name": "Get All Leads (with filters)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/leads?status=New&lastName=Doe&page=1&pageSize=10&sortBy=creation&sortOrder=desc",
+              "host": ["{{base_url}}"],
+              "path": ["api", "leads"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "New"
+                },
+                {
+                  "key": "lastName",
+                  "value": "Doe"
+                },
+                {
+                  "key": "email",
+                  "value": "john@example.com",
+                  "disabled": true
+                },
+                {
+                  "key": "phone",
+                  "value": "+1-555",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "Doe",
+                  "disabled": true
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "creation"
+                },
+                {
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Lead by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/leads/{{lead_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "leads", "{{lead_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Lead",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Contacted\",\n  \"message\": \"Customer requested test drive\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/leads/{{lead_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "leads", "{{lead_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Delete Lead",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/leads/{{lead_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "leads", "{{lead_id}}"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "vehicle_id",
+      "value": "your-vehicle-id-here",
+      "type": "string"
+    },
+    {
+      "key": "lead_id",
+      "value": "your-lead-id-here",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# Environment files (contain secrets — never commit these)
+.env
+.env.local
+.env.*.local
+
+# Archives
+backend.zip
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
