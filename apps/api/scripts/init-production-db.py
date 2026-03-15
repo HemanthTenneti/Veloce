@@ -5,18 +5,23 @@ Creates or synchronizes the two Frappe DocTypes required by the Veloce API bridg
   - Vehicle Inventory
   - Lead
 
+This script runs against a vanilla Frappe installation (no ERPNext required).
+Both DocTypes are created as custom modules and their SQL tables are physically
+materialized inline — no separate `bench migrate` is needed for the schema, though
+running migrate afterwards is still recommended to finalize any Frappe housekeeping.
+
 This script is idempotent. Running it against an existing site will sync field
 definitions without data loss.
 
 Deployment:
     Copy this file into the running Frappe container:
 
-        docker compose -f infra/local-dev/docker-compose.yml cp \\
-          apps/api/scripts/init-production-db.py \\
-          backend:/home/frappe/frappe-bench/apps/frappe/frappe/init_production_db.py
+        docker cp apps/api/scripts/init-production-db.py \\
+          veloce-engine-backend-1:/home/frappe/frappe-bench/apps/frappe/frappe/init_production_db.py
 
 Execution:
-    bench --site localhost execute frappe.init_production_db.run_from_bench
+    docker exec -w /home/frappe/frappe-bench veloce-engine-backend-1 \\
+      bench --site localhost execute frappe.init_production_db.run_from_bench
 
 Post-run:
     bench --site localhost migrate
@@ -31,7 +36,6 @@ import frappe
 
 
 DocTypeField = Dict[str, Any]
-DocTypeSpec = Dict[str, Any]
 
 
 # ---------------------------------------------------------------------------
@@ -39,6 +43,11 @@ DocTypeSpec = Dict[str, Any]
 # ---------------------------------------------------------------------------
 
 def _build_vehicle_fields() -> List[DocTypeField]:
+    """Complete Vehicle Inventory field list per DATA_CONTRACT.md.
+
+    Includes thumbnail (reqd) + image_1 through image_10 (optional) so all
+    11 Attach Image columns are physically present in the database table.
+    """
     fields: List[DocTypeField] = [
         {"fieldname": "make",  "label": "Make",  "fieldtype": "Data", "reqd": 1},
         {"fieldname": "model", "label": "Model", "fieldtype": "Data", "reqd": 1},
@@ -83,12 +92,12 @@ def _build_vehicle_fields() -> List[DocTypeField]:
 
 
 def _build_lead_fields() -> List[DocTypeField]:
+    """Complete Lead field list per DATA_CONTRACT.md."""
     return [
-        {"fieldname": "first_name", "label": "First Name", "fieldtype": "Data",      "reqd": 1},
-        {"fieldname": "last_name",  "label": "Last Name",  "fieldtype": "Data",      "reqd": 1},
-        {"fieldname": "email",      "label": "Email",      "fieldtype": "Data",      "reqd": 1},
-        {"fieldname": "phone",      "label": "Phone",      "fieldtype": "Data",      "reqd": 1},
-        {"fieldname": "message",    "label": "Message",    "fieldtype": "Long Text", "reqd": 1},
+        {"fieldname": "first_name",         "label": "First Name",         "fieldtype": "Data",      "reqd": 1},
+        {"fieldname": "last_name",          "label": "Last Name",          "fieldtype": "Data",      "reqd": 1},
+        {"fieldname": "email",              "label": "Email",              "fieldtype": "Data",      "reqd": 1},
+        {"fieldname": "phone",              "label": "Phone",              "fieldtype": "Data",      "reqd": 1},
         {
             "fieldname": "vehicle_properties",
             "label": "Vehicle Properties",
@@ -96,35 +105,20 @@ def _build_lead_fields() -> List[DocTypeField]:
             "reqd": 1,
             "description": "Denormalized vehicle descriptor. Format: 'Color Make Model Year'",
         },
+        {"fieldname": "message",            "label": "Message",            "fieldtype": "Long Text", "reqd": 1},
+        {"fieldname": "source",             "label": "Source",             "fieldtype": "Data",      "reqd": 0},
         {
             "fieldname": "status",
             "label": "Status",
             "fieldtype": "Select",
+            "reqd": 0,
             "options": "New\nContacted",
         },
     ]
 
 
 # ---------------------------------------------------------------------------
-# DocType registry
-# ---------------------------------------------------------------------------
-
-DOC_TYPES: List[DocTypeSpec] = [
-    {
-        "name": "Vehicle Inventory",
-        "module": "Custom",
-        "fields": _build_vehicle_fields(),
-    },
-    {
-        "name": "Lead",
-        "module": "Custom",
-        "fields": _build_lead_fields(),
-    },
-]
-
-
-# ---------------------------------------------------------------------------
-# Helpers
+# Permissions helper
 # ---------------------------------------------------------------------------
 
 def _permissions() -> List[Dict[str, Any]]:
@@ -142,70 +136,69 @@ def _permissions() -> List[Dict[str, Any]]:
     ]
 
 
-def _doctype_payload(spec: DocTypeSpec) -> Dict[str, Any]:
-    return {
-        "module": spec.get("module", "Custom"),
-        "custom": 1,
-        "istable": 0,
-        "track_changes": 1,
-        "allow_import": 1,
-        "fields": spec["fields"],
-        "permissions": _permissions(),
-    }
-
-
 # ---------------------------------------------------------------------------
-# Core operations
+# Core create / sync — shared by both DocTypes
 # ---------------------------------------------------------------------------
 
-def _sync_doctype(spec: DocTypeSpec) -> str:
-    """Update field definitions on an existing DocType."""
-    name = spec["name"]
-    doc = frappe.get_doc("DocType", name)
-    payload = _doctype_payload(spec)
+def _create_or_sync_doctype(name: str, fields: List[DocTypeField]) -> str:
+    """Create a new custom DocType or sync an existing one.
 
-    doc.module = payload["module"]
-    doc.custom = payload["custom"]
-    doc.istable = payload["istable"]
-    doc.track_changes = payload["track_changes"]
-    doc.allow_import = payload["allow_import"]
-    doc.set("fields", payload["fields"])
-    doc.set("permissions", payload["permissions"])
-    doc.save(ignore_permissions=True)
+    Physical table materialization sequence for a NEW DocType:
+        1. doc.insert()         — writes the DocType metadata row to tabDocType
+        2. frappe.db.commit()   — persists metadata before any DDL is issued
+        3. frappe.db.updatedb() — issues CREATE TABLE `tab<name>`
+        4. frappe.db.commit()   — commits the CREATE TABLE DDL transaction
 
-    frappe.clear_cache(doctype=name)
-    frappe.db.updatedb(name)
-    frappe.clear_cache(doctype=name)
-
-    field_names = [f["fieldname"] for f in spec["fields"]]
-    return f"SYNC  '{name}' -> [{', '.join(field_names)}]"
-
-
-def _create_or_sync_doctype(spec: DocTypeSpec) -> str:
-    """Create a new DocType, or sync it if it already exists."""
-    name = spec["name"]
-
+    For an EXISTING DocType (sync path):
+        doc.save() -> commit -> updatedb (ALTER TABLE for added/changed columns) -> commit
+    """
     if frappe.db.exists("DocType", name):
-        return _sync_doctype(spec)
+        doc = frappe.get_doc("DocType", name)
+        doc.module = "Custom"
+        doc.custom = 1
+        doc.istable = 0
+        doc.track_changes = 1
+        doc.allow_import = 1
+        doc.set("fields", fields)
+        doc.set("permissions", _permissions())
+        doc.save(ignore_permissions=True)
+        frappe.db.commit()
+        frappe.db.updatedb(name)
+        frappe.db.commit()
+        frappe.clear_cache(doctype=name)
+        field_names = [f["fieldname"] for f in fields]
+        return f"SYNC  '{name}' -> [{', '.join(field_names)}]"
 
     doc = frappe.get_doc(
         {
             "doctype": "DocType",
             "name": name,
-            **_doctype_payload(spec),
+            "module": "Custom",
+            "custom": 1,
+            "istable": 0,
+            "track_changes": 1,
+            "allow_import": 1,
+            "fields": fields,
+            "permissions": _permissions(),
         }
     )
     doc.insert(ignore_permissions=True)
+    frappe.db.commit()          # lock in metadata row before DDL
+    frappe.db.updatedb(name)    # CREATE TABLE `tab<name>`
+    frappe.db.commit()          # commit the DDL transaction
     frappe.clear_cache(doctype=name)
 
-    field_names = [f["fieldname"] for f in spec["fields"]]
+    field_names = [f["fieldname"] for f in fields]
     return f"CREATE '{name}' -> [{', '.join(field_names)}]"
 
 
-def _verify_fields(spec: DocTypeSpec) -> str:
-    """Confirm persisted fields match the expected definition."""
-    name = spec["name"]
-    expected = [f["fieldname"] for f in spec["fields"]]
+# ---------------------------------------------------------------------------
+# Verification
+# ---------------------------------------------------------------------------
+
+def _verify_doctype(name: str, fields: List[DocTypeField]) -> str:
+    """Confirm persisted DocField rows match the expected field list."""
+    expected = [f["fieldname"] for f in fields]
     rows = frappe.get_all(
         "DocField",
         filters={"parent": name, "parenttype": "DocType"},
@@ -236,8 +229,8 @@ def run_from_bench() -> None:
     print("Veloce — Production DocType Initializer")
     print(separator)
 
-    for spec in DOC_TYPES:
-        print(_create_or_sync_doctype(spec))
+    print(_create_or_sync_doctype("Vehicle Inventory", _build_vehicle_fields()))
+    print(_create_or_sync_doctype("Lead", _build_lead_fields()))
 
     frappe.db.commit()
 
@@ -246,8 +239,8 @@ def run_from_bench() -> None:
     print("DB committed. Running field verification...")
     print(separator)
 
-    for spec in DOC_TYPES:
-        print(_verify_fields(spec))
+    print(_verify_doctype("Vehicle Inventory", _build_vehicle_fields()))
+    print(_verify_doctype("Lead",              _build_lead_fields()))
 
     print()
     print(separator)

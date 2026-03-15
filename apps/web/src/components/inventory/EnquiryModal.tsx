@@ -2,21 +2,24 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useTranslations } from "next-intl";
 import { FiX, FiArrowUpRight, FiCheck } from "react-icons/fi";
 import gsap from "gsap";
 import { z } from "zod";
 import { API_BASE_URL } from "@/lib/vehicleApi";
 import type { Vehicle } from "@/types/vehicle";
 
-// Mirrors createLeadSchema from @veloce/shared — defined locally to avoid
-// the .js re-export chain that Turbopack cannot resolve from raw TypeScript source.
+// Error field values are translation key names — translated at display time
 const enquirySchema = z.object({
-  firstName: z.string().min(1, "Required"),
-  lastName: z.string().min(1, "Required"),
-  email: z.string().email("Invalid email"),
-  phone: z.string().min(7, "Minimum 7 characters"),
+  firstName: z.string().min(1, "validationRequired"),
+  lastName: z.string().min(1, "validationRequired"),
+  email: z.string().email("validationEmail"),
+  phone: z.string().regex(
+    /^\+1[\s.\-]?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$/,
+    "validationPhone",
+  ),
   vehicleProperties: z.string().min(1),
-  message: z.string().min(1, "Required"),
+  message: z.string().min(1, "validationRequired"),
 });
 
 interface EnquiryModalProps {
@@ -24,7 +27,7 @@ interface EnquiryModalProps {
   onClose: () => void;
 }
 
-const EMPTY_FORM = { firstName: "", lastName: "", email: "", phone: "", message: "" };
+const EMPTY_FORM = { firstName: "", lastName: "", email: "", phone: "+1 ", message: "" };
 
 export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -35,18 +38,16 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const t = useTranslations("EnquiryModal");
 
-  // Portal mount — avoids SSR mismatch
   useEffect(() => {
     setMounted(true);
     return () => { closeTlRef.current?.kill(); };
   }, []);
 
-  // GSAP entry animation
   useEffect(() => {
     if (!mounted) return;
     if (vehicle) {
-      // Reset form state when a new vehicle is opened
       setFormData(EMPTY_FORM);
       setErrors({});
       setIsSuccess(false);
@@ -66,7 +67,6 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
     }
   }, [vehicle, mounted]);
 
-  // Lock body scroll while modal is open
   useEffect(() => {
     if (vehicle) {
       const previous = document.body.style.overflow;
@@ -75,8 +75,6 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
     }
   }, [vehicle]);
 
-  // GSAP exit animation — stored in ref so re-triggers kill the in-flight tween,
-  // and onComplete fires onClose only once per intentional close action.
   const handleClose = useCallback(() => {
     closeTlRef.current?.kill();
     closeTlRef.current = gsap.timeline({ onComplete: onClose });
@@ -84,7 +82,6 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
     closeTlRef.current.to(overlayRef.current, { autoAlpha: 0, duration: 0.2, ease: "power2.in" }, "-=0.1");
   }, [onClose]);
 
-  // Keyboard close
   useEffect(() => {
     if (!vehicle) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") handleClose(); };
@@ -94,7 +91,8 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const sanitized = name === "phone" && !value.startsWith("+1") ? "+1 " + value.replace(/^\+?1?\s*/, "") : value;
+    setFormData((prev) => ({ ...prev, [name]: sanitized }));
     if (errors[name]) setErrors((prev) => { const next = { ...prev }; delete next[name]; return next; });
   };
 
@@ -105,7 +103,6 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
     const vehicleProperties = `${vehicle.color} ${vehicle.make} ${vehicle.model} ${vehicle.year}`;
     const payload = { ...formData, vehicleProperties };
 
-    // Zod validation on the frontend
     const result = enquirySchema.safeParse(payload);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -126,14 +123,23 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
       });
       if (!response.ok) {
         const body = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error ?? "Submission failed");
+        throw new Error(body?.error ?? "submissionFailed");
       }
       setIsSuccess(true);
     } catch (err) {
-      setErrors({ form: err instanceof Error ? err.message : "Submission failed. Please try again." });
+      setErrors({ form: err instanceof Error ? err.message : "submissionFailed" });
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Translate a zod error key — falls back to the raw string if not a known key
+  const te = (key: string): string => {
+    const knownKeys = ["validationRequired", "validationEmail", "validationPhone", "submissionFailed"] as const;
+    if ((knownKeys as readonly string[]).includes(key)) {
+      return t(key as (typeof knownKeys)[number]);
+    }
+    return key;
   };
 
   if (!mounted || !vehicle) return null;
@@ -159,7 +165,7 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
         data-testid="enquiry-modal-card"
         role="dialog"
         aria-modal="true"
-        aria-label={`Enquire about ${vehicleLabel}`}
+        aria-label={`${t("eyebrow")} — ${vehicleLabel}`}
         className="relative w-full max-w-[520px] overflow-hidden rounded-[32px] border"
         style={{
           backgroundColor: "var(--bg-card)",
@@ -169,7 +175,6 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
           visibility: "hidden",
         }}
       >
-        {/* Close button */}
         <button
           type="button"
           onClick={handleClose}
@@ -181,13 +186,12 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
         </button>
 
         <div className="px-5 pb-5 pt-5 sm:px-8 sm:pb-8 sm:pt-8">
-          {/* Header */}
           <div className="mb-7">
             <span className="font-mono text-[10px] tracking-[0.28em] uppercase" style={{ color: "var(--veloce-red, #CC0000)" }}>
-              PRIVATE ENQUIRY
+              {t("eyebrow")}
             </span>
             <h2 className="mt-2 font-display text-2xl tracking-[-0.055em] leading-tight" style={{ color: "var(--text-primary)" }}>
-              Reserve Your Interest
+              {t("heading")}
             </h2>
             <p className="mt-1.5 font-mono text-[10px] tracking-[0.16em] uppercase" style={{ color: "var(--text-muted)" }}>
               {vehicleLabel}
@@ -204,17 +208,14 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
               </div>
               <div>
                 <p className="font-display text-xl tracking-tight" style={{ color: "var(--text-primary)" }}>
-                  Enquiry received.
+                  {t("successTitle")}
                 </p>
                 <p className="mt-1 font-mono text-[10px] tracking-[0.16em] uppercase" style={{ color: "var(--text-muted)" }}>
-                  Our team will contact you shortly.
+                  {t("successBody")}
                 </p>
               </div>
-              <button
-                onClick={handleClose}
-                className="mt-4 luxury-button luxury-button--accent"
-              >
-                Close
+              <button onClick={handleClose} className="mt-4 luxury-button luxury-button--accent">
+                {t("close")}
               </button>
             </div>
           ) : (
@@ -222,17 +223,17 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FieldGroup
                   id="firstName"
-                  label="First Name"
+                  label={t("firstName")}
                   value={formData.firstName}
-                  error={errors.firstName}
+                  error={errors.firstName ? te(errors.firstName) : undefined}
                   onChange={handleChange}
                   placeholder="James"
                 />
                 <FieldGroup
                   id="lastName"
-                  label="Last Name"
+                  label={t("lastName")}
                   value={formData.lastName}
-                  error={errors.lastName}
+                  error={errors.lastName ? te(errors.lastName) : undefined}
                   onChange={handleChange}
                   placeholder="Hunt"
                 />
@@ -241,21 +242,21 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
               <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FieldGroup
                   id="email"
-                  label="Email"
+                  label={t("email")}
                   type="email"
                   value={formData.email}
-                  error={errors.email}
+                  error={errors.email ? te(errors.email) : undefined}
                   onChange={handleChange}
                   placeholder="james@veloce.co"
                 />
                 <FieldGroup
                   id="phone"
-                  label="Phone"
+                  label={t("phone")}
                   type="tel"
                   value={formData.phone}
-                  error={errors.phone}
+                  error={errors.phone ? te(errors.phone) : undefined}
                   onChange={handleChange}
-                  placeholder="+44 7700 900000"
+                  placeholder="+1 (555) 555-5555"
                 />
               </div>
 
@@ -265,7 +266,7 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                   className="mb-1.5 block font-mono text-[10px] tracking-[0.22em] uppercase"
                   style={{ color: "var(--text-muted)" }}
                 >
-                  Message
+                  {t("message")}
                 </label>
                 <textarea
                   id="message"
@@ -273,7 +274,7 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                   rows={4}
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Tell us about your requirements or preferred appointment time…"
+                  placeholder={t("messagePlaceholder")}
                   className="w-full resize-none rounded-2xl border bg-transparent px-4 py-3 text-sm outline-none transition-colors placeholder:text-white/25 focus:outline-none"
                   style={{
                     borderColor: errors.message ? "rgba(204,0,0,0.6)" : "var(--border)",
@@ -282,14 +283,14 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                 />
                 {errors.message && (
                   <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#CC0000" }}>
-                    {errors.message}
+                    {te(errors.message)}
                   </p>
                 )}
               </div>
 
               {errors.form && (
                 <p className="mt-3 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#CC0000" }}>
-                  {errors.form}
+                  {te(errors.form)}
                 </p>
               )}
 
@@ -299,12 +300,12 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                 className="luxury-button luxury-button--accent mt-6 w-full"
                 style={{ opacity: isSubmitting ? 0.6 : 1 }}
               >
-                {isSubmitting ? "Submitting…" : "Submit Enquiry"}
+                {isSubmitting ? t("submitting") : t("submitIdle")}
                 {!isSubmitting && <FiArrowUpRight size={16} />}
               </button>
 
               <p className="mt-4 text-center font-mono text-[9px] tracking-[0.16em] uppercase" style={{ color: "var(--text-muted)" }}>
-                Your information is treated with absolute discretion.
+                {t("disclaimer")}
               </p>
             </form>
           )}

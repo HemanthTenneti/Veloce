@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface InventoryHeaderProps {
   total: number;
@@ -10,6 +11,7 @@ interface InventoryHeaderProps {
 export default function InventoryHeader({ total, isLoading }: InventoryHeaderProps) {
   const [count, setCount] = useState(0);
   const frameRef = useRef<number | null>(null);
+  const t = useTranslations("InventoryHeader");
 
   useEffect(() => {
     if (isLoading) {
@@ -43,15 +45,15 @@ export default function InventoryHeader({ total, isLoading }: InventoryHeaderPro
       <div className="section-shell max-w-[1440px] mx-auto w-full px-7 py-8 md:px-10 md:py-10 flex flex-col gap-8 md:flex-row md:justify-between md:items-end relative z-10">
         <div>
           <span className="eyebrow mb-4">
-            OUR VEHICLES
+            {t("eyebrow")}
           </span>
           <h1 className="font-display text-4xl md:text-[4vw] leading-none tracking-[-0.07em]" style={{ color: "var(--text-primary)" }}>
-            The Full Showroom.
+            {t("heading")}
           </h1>
         </div>
         <div className="text-left md:text-right">
           <div className="font-mono text-[10px] tracking-[0.26em] mb-2" style={{ color: "var(--text-muted)" }}>
-            VEHICLES IN STOCK
+            {t("vehiclesInStock")}
           </div>
           {isLoading ? (
             <div className="gt-skeleton h-14 w-24 ml-0 md:ml-auto rounded-2xl" />

@@ -1,9 +1,12 @@
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 
 export default function Footer() {
+  const t = useTranslations("Footer");
+
   return (
-    <footer className="bg-[#0D0D0D] text-white px-6 md:px-12 relative z-20 pt-16 gs-section">
+    <footer id="site-footer" className="bg-[#0D0D0D] text-white px-6 md:px-12 relative z-20 pt-16 gs-section">
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
         {/* Left */}
         <div>
@@ -11,8 +14,7 @@ export default function Footer() {
             VELOCE.
           </div>
           <p className="font-normal text-sm text-[#666666] max-w-xs mb-8">
-            Premium pre-owned vehicles. Curated for the driver. Presented with
-            transparency.
+            {t("tagline")}
           </p>
           <div className="flex items-center gap-4 text-white/70">
             <a href="#" className="hover:text-white transition-colors" aria-label="Instagram">
@@ -30,29 +32,18 @@ export default function Footer() {
         {/* Centre */}
         <div>
           <h4 className="font-mono text-[11px] text-[#CC0000] tracking-[0.12em] mb-6 uppercase">
-            Navigate
+            {t("navigate")}
           </h4>
-          <ul className="space-y-3 font-normal text-sm text-white/80">
+          <ul className="space-y-3 font-mono text-sm text-white/80">
             <li>
-              <Link
-                href="/"
-                className="hover:text-[#CC0000] transition-colors"
-              >
-                Home
+              <Link href="/" className="hover:text-[#CC0000] transition-colors">
+                {t("home")}
               </Link>
             </li>
             <li>
-              <Link
-                href="/inventory"
-                className="hover:text-[#CC0000] transition-colors"
-              >
-                Inventory
+              <Link href="/inventory" className="hover:text-[#CC0000] transition-colors">
+                {t("inventory")}
               </Link>
-            </li> 
-            <li>
-              <a href="#" className="hover:text-[#CC0000] transition-colors">
-                Contact
-              </a>
             </li>
           </ul>
         </div>
@@ -60,12 +51,12 @@ export default function Footer() {
         {/* Right */}
         <div>
           <h4 className="font-mono text-[11px] text-[#CC0000] tracking-[0.12em] mb-6 uppercase">
-            Get in Touch
+            {t("getInTouch")}
           </h4>
           <div className="font-mono text-sm text-white space-y-3">
             <div className="flex items-center gap-3">
               <Icon icon="mdi:phone" width={16} className="text-[#CC0000]" />
-              <span>+44 (0) 20 7123 4567</span>
+              <span>+1 (310) 555-0100</span>
             </div>
             <div className="flex items-center gap-3">
               <Icon icon="mdi:email" width={16} className="text-[#CC0000]" />
@@ -79,16 +70,16 @@ export default function Footer() {
       <div className="max-w-[1440px] mx-auto border-t border-[#2A2A2A] py-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="font-normal text-[12px] text-[#444444] flex items-center gap-1">
           <Icon icon="mdi:copyright" width={14} />
-          <span>2025 Veloce Automotive</span>
+          <span>{t("copyright")}</span>
         </div>
         <div className="font-normal text-[12px] text-[#444444] flex gap-6">
           <a href="#" className="hover:text-[#666666] flex items-center gap-1 transition-colors">
             <Icon icon="mdi:shield-check" width={14} />
-            <span>Privacy Policy</span>
+            <span>{t("privacyPolicy")}</span>
           </a>
           <a href="#" className="hover:text-[#666666] flex items-center gap-1 transition-colors">
             <Icon icon="mdi:file-document" width={14} />
-            <span>Terms</span>
+            <span>{t("terms")}</span>
           </a>
         </div>
       </div>

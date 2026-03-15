@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const FRAPPE_URL = process.env.FRAPPE_URL ?? "http://localhost:8080";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   transpilePackages: ["@veloce/shared"],
   images: {
     remotePatterns: [
@@ -16,7 +20,6 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      // Proxy Frappe file paths so next/image can optimise them as local assets
       {
         source: "/files/:path*",
         destination: `${FRAPPE_URL}/files/:path*`,
@@ -25,4 +28,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withNextIntl(nextConfig);

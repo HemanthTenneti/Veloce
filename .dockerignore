@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+apps/web/.next
+apps/api/dist
+packages/*/dist
+
+# Test artifacts
+test-results
+.ai-workflow/*.png
+playwright-report
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Version control
+.git
+.gitignore
+
+# Editor / OS
+.DS_Store
+*.log
+*.pem
+
+# CI/CD local caches
+.turbo
+.cache

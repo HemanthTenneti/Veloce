@@ -53,7 +53,7 @@ export const createLeadController = async (
       const response: ApiResponse = {
         success: false,
         message: "Validation failed",
-        error: error.errors
+        error: error.issues
           .map((issue) => `${issue.path.join(".")}: ${issue.message}`)
           .join("; "),
         timestamp: new Date().toISOString(),

@@ -26,8 +26,13 @@ const galleryKeys = [
   "image10",
 ] as const satisfies ReadonlyArray<keyof Vehicle>;
 
-export async function fetchVehicles(): Promise<Vehicle[]> {
-  const response = await fetch(VEHICLES_ENDPOINT, {
+export async function fetchVehicles(locale = "en"): Promise<Vehicle[]> {
+  const url =
+    locale !== "en"
+      ? `${VEHICLES_ENDPOINT}?locale=${encodeURIComponent(locale)}`
+      : VEHICLES_ENDPOINT;
+
+  const response = await fetch(url, {
     headers: {
       Accept: "application/json",
     },
@@ -71,24 +76,22 @@ export function getVehicleGallery(vehicle: Vehicle): string[] {
   return Array.from(new Set(gallery)).slice(0, 10);
 }
 
-export function getVehicleTagline(vehicle: Vehicle): string {
-  return vehicle.description?.trim() || `${vehicle.color} finish. Commissioned for immediate collection.`;
-}
 
-export function formatVehiclePrice(price?: number | null): string {
-  if (price == null) return "Price on request";
 
-  return new Intl.NumberFormat("en-GB", {
+export function formatVehiclePrice(price?: number | null, priceOnRequest?: string): string {
+  if (price == null) return priceOnRequest ?? "Price on request";
+
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
-    currency: "GBP",
+    currency: "USD",
     maximumFractionDigits: 0,
   }).format(price);
 }
 
-export function formatVehicleMileage(mileage?: number | null): string {
-  if (mileage == null) return "Mileage TBC";
+export function formatVehicleMileage(mileage?: number | null, mileageTbc?: string): string {
+  if (mileage == null) return mileageTbc ?? "Mileage TBC";
 
-  return `${new Intl.NumberFormat("en-GB").format(mileage)} mi`;
+  return `${new Intl.NumberFormat("en-US").format(mileage)} mi`;
 }
 
 export function sortVehiclesByNewest(vehicles: Vehicle[]): Vehicle[] {

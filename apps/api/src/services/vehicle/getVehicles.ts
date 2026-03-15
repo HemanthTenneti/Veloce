@@ -11,6 +11,7 @@ import {
   type FrappeVehicleRecord,
   normalizeVehicle,
 } from "./vehicleMapper.js";
+import { localizeVehicles } from "./translationService.js";
 
 /**
  * Get all vehicles from Frappe CRM with optional filtering
@@ -19,6 +20,7 @@ import {
  */
 export const getVehiclesService = async (
   filters?: VehicleQueryFilters,
+  locale = "en",
 ): Promise<ServiceResponse<Vehicle[]>> => {
   try {
     logger.info("Fetching vehicles from Frappe", { filters });
@@ -116,7 +118,8 @@ export const getVehiclesService = async (
     }
 
     const response = await frappeClient.get<FrappeVehicleRecord[]>(endpoint, params);
-    const vehicles = Array.isArray(response) ? response.map(normalizeVehicle) : [];
+    const normalized = Array.isArray(response) ? response.map(normalizeVehicle) : [];
+    const vehicles = await localizeVehicles(normalized, locale);
 
     return {
       success: true,

@@ -1,0 +1,136 @@
+{
+  "Metadata": {
+    "title": "Premium Dealership | Veloce",
+    "description": "Curated selection of performance and luxury vehicles. Inspected with precision, presented with total transparency."
+  },
+  "LanguageSwitcher": {
+    "en": "EN",
+    "es": "ES"
+  },
+  "Navbar": {
+    "home": "Home",
+    "inventory": "Inventory"
+  },
+  "Footer": {
+    "tagline": "Premium pre-owned vehicles. Curated for the driver. Presented with transparency.",
+    "navigate": "Navigate",
+    "home": "Home",
+    "inventory": "Inventory",
+    "getInTouch": "Get in Touch",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms",
+    "copyright": "2025 Veloce Automotive"
+  },
+  "HeroSection": {
+    "eyebrow": "EST. 2025 · CURATED PRE-OWNED",
+    "h1": "Veloce.",
+    "h2": "Harmonized for desire.",
+    "body": "A boutique showroom for performance and luxury vehicles, edited with the discipline of an atelier. Every listing is inspected, photographed, and presented with calm precision.",
+    "browseInventory": "Browse Inventory",
+    "contactUs": "Contact Us"
+  },
+  "FeaturedVehicles": {
+    "eyebrow": "FEATURED VEHICLES",
+    "heading1": "Handpicked.",
+    "heading2": "Fresh from the live feed.",
+    "taglineFallback": "{color} finish. Commissioned for immediate collection.",
+    "priceOnRequest": "Price on request",
+    "moreDetails": "More Details",
+    "errorTitle": "The live showroom is warming back up.",
+    "errorBody": "Inventory data could not be loaded from the local API feed. Once the backend responds again, this section will repopulate automatically."
+  },
+  "InventoryCTA": {
+    "eyebrow": "FULL INVENTORY",
+    "heading": "There are more where those came from.",
+    "body": "Every vehicle inspected. Every price transparent.",
+    "cta": "Browse Full Inventory"
+  },
+  "HowItWorks": {
+    "eyebrow": "THE PROCESS",
+    "heading": "Simple. Transparent. Yours.",
+    "step1Title": "Browse & Discover.",
+    "step1Body": "Explore our curated inventory online or in-person. Detailed specs, high-res galleries, and honest condition reports.",
+    "step2Title": "Reserve & Inspect.",
+    "step2Body": "Secure your chosen vehicle with a fully refundable deposit. Schedule a comprehensive test drive at your convenience.",
+    "step3Title": "Finance & Drive.",
+    "step3Body": "Tailored finance packages and seamless handover process. Drive away with complete confidence and peace of mind."
+  },
+  "ReserveCTA": {
+    "reserveLabel": "Reserve Online",
+    "reserveHeading": "Secure your vehicle before it leaves the floor.",
+    "deposit": "$250 fully refundable deposit",
+    "vehicleHeld": "Vehicle held for 72 hours",
+    "confirmation": "Instant confirmation",
+    "checkout": "Secure checkout via Stripe",
+    "showroomLabel": "Visit Showroom",
+    "showroomHeading": "Experience it in person with a private walkthrough.",
+    "hours": "Open Mon-Sat 09:00–18:00",
+    "address1": "100 Performance Way",
+    "address2": "London, W1K 7AA",
+    "testDrives": "Test drives by appointment"
+  },
+  "InventoryHeader": {
+    "eyebrow": "OUR VEHICLES",
+    "heading": "The Full Showroom.",
+    "vehiclesInStock": "VEHICLES IN STOCK"
+  },
+  "FilterBar": {
+    "make": "Make",
+    "year": "Year",
+    "color": "Color",
+    "price": "Price",
+    "anyMake": "Any Make",
+    "anyYear": "Any Year",
+    "anyColor": "Any Color",
+    "anyPrice": "Any Price",
+    "clearFilters": "Clear Filters",
+    "sort": "Sort",
+    "sortNewest": "Newest",
+    "sortPriceAsc": "Price: Low → High",
+    "sortPriceDesc": "Price: High → Low",
+    "sortYearDesc": "Year: New → Old",
+    "sortYearAsc": "Year: Old → New",
+    "priceUnder100k": "Under $100K",
+    "price100k150k": "$100K – $150K",
+    "priceOver150k": "Over $150K"
+  },
+  "VehicleGrid": {
+    "liveInventory": "LIVE INVENTORY",
+    "errorTitle": "Vehicle data is currently unavailable.",
+    "errorBody": "The frontend is pointed at the local API, but that feed did not answer successfully. Bring the backend back up and this grid will hydrate automatically.",
+    "emptyTitle": "No vehicles are live yet.",
+    "emptyBody": "Seed inventory into Frappe or publish a vehicle from the API to populate this showroom.",
+    "enquireNow": "Enquire Now",
+    "visualDetails": "Visual Details",
+    "closeDetails": "Close Details",
+    "syncStatus": "Live showroom sync: {count} vehicles ready to inspect.",
+    "openCard": "Open any card for harmonized Veloce details.",
+    "frame": "Frame {n}",
+    "taglineFallback": "{color} finish. Commissioned for immediate collection.",
+    "priceOnRequest": "Price on request",
+    "mileageTbc": "Mileage TBC",
+    "statusAvailable": "AVAILABLE",
+    "statusSold": "SOLD",
+    "statusReserved": "RESERVED"
+  },
+  "EnquiryModal": {
+    "eyebrow": "PRIVATE ENQUIRY",
+    "heading": "Reserve Your Interest",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "messagePlaceholder": "Tell us about your requirements or preferred appointment time…",
+    "submitIdle": "Submit Enquiry",
+    "submitting": "Submitting…",
+    "disclaimer": "Your information is treated with absolute discretion.",
+    "successTitle": "Enquiry received.",
+    "successBody": "Our team will contact you shortly.",
+    "close": "Close",
+    "validationRequired": "Required",
+    "validationEmail": "Invalid email",
+    "validationPhone": "Enter a valid US number: +1 (555) 555-5555",
+    "submissionFailed": "Submission failed. Please try again."
+  }
+}

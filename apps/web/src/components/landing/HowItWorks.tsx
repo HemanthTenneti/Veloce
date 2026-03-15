@@ -1,6 +1,10 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 export default function HowItWorks() {
+  const t = useTranslations("HowItWorks");
+
   return (
     <section
       className="py-24 md:py-32 relative gs-section overflow-hidden"
@@ -9,18 +13,17 @@ export default function HowItWorks() {
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <div className="mb-16">
           <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-            THE PROCESS
+            {t("eyebrow")}
           </span>
           <h2
             className="font-display font-bold tracking-tight text-4xl md:text-[3.5vw]"
             style={{ color: "var(--text-primary)" }}
           >
-            Simple. Transparent. Yours.
+            {t("heading")}
           </h2>
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 stack-container">
-          {/* Dashed line connecting cards on desktop */}
           <div className="hidden md:block absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-[#CC0000] z-0 opacity-30" />
 
           {/* Card 1 */}
@@ -38,15 +41,11 @@ export default function HowItWorks() {
                 </svg>
               </div>
             </div>
-            <h3
-              className="font-display font-bold tracking-tight text-2xl mb-3"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Browse &amp; Discover.
+            <h3 className="font-display font-bold tracking-tight text-2xl mb-3" style={{ color: "var(--text-primary)" }}>
+              {t("step1Title")}
             </h3>
             <p style={{ color: "var(--text-secondary)" }} className="font-normal text-sm">
-              Explore our curated inventory online or in-person. Detailed specs,
-              high-res galleries, and honest condition reports.
+              {t("step1Body")}
             </p>
           </div>
 
@@ -66,15 +65,11 @@ export default function HowItWorks() {
                 </svg>
               </div>
             </div>
-            <h3
-              className="font-display font-bold tracking-tight text-2xl mb-3"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Reserve &amp; Inspect.
+            <h3 className="font-display font-bold tracking-tight text-2xl mb-3" style={{ color: "var(--text-primary)" }}>
+              {t("step2Title")}
             </h3>
             <p style={{ color: "var(--text-secondary)" }} className="font-normal text-sm">
-              Secure your chosen vehicle with a fully refundable deposit.
-              Schedule a comprehensive test drive at your convenience.
+              {t("step2Body")}
             </p>
           </div>
 
@@ -91,15 +86,11 @@ export default function HowItWorks() {
                 </svg>
               </div>
             </div>
-            <h3
-              className="font-display font-bold tracking-tight text-2xl mb-3"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Finance &amp; Drive.
+            <h3 className="font-display font-bold tracking-tight text-2xl mb-3" style={{ color: "var(--text-primary)" }}>
+              {t("step3Title")}
             </h3>
             <p style={{ color: "var(--text-secondary)" }} className="font-normal text-sm">
-              Tailored finance packages and seamless handover process. Drive away
-              with complete confidence and peace of mind.
+              {t("step3Body")}
             </p>
           </div>
         </div>

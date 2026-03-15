@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { FiArrowLeft, FiArrowRight, FiArrowUpRight } from "react-icons/fi";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -10,21 +11,19 @@ import { useVehicles } from "@/hooks/useVehicles";
 import {
   formatVehiclePrice,
   getVehiclePrimaryImage,
-  getVehicleTagline,
 } from "@/lib/vehicleApi";
 
-function FeaturedVehiclesSkeleton({ isDesktop }: { isDesktop: boolean }) {
+function FeaturedVehiclesSkeleton({ isDesktop, eyebrow }: { isDesktop: boolean; eyebrow: string }) {
   if (!isDesktop) {
     return (
       <section className="relative w-full py-8" style={{ backgroundColor: "#050505" }}>
         <div className="px-6 pt-6 pb-6 z-20">
           <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-            FEATURED VEHICLES
+            {eyebrow}
           </span>
           <div className="gt-skeleton h-8 w-48 rounded-full mb-3" />
           <div className="gt-skeleton h-8 w-56 rounded-full" />
         </div>
-
         <div className="flex gap-4 px-6 overflow-hidden">
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="gt-skeleton h-96 w-80 shrink-0 rounded-[28px]" />
@@ -41,12 +40,11 @@ function FeaturedVehiclesSkeleton({ isDesktop }: { isDesktop: boolean }) {
     >
       <div className="mb-10">
         <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-          FEATURED VEHICLES
+          {eyebrow}
         </span>
         <div className="gt-skeleton h-10 w-64 rounded-full mb-4" />
         <div className="gt-skeleton h-10 w-72 rounded-full" />
       </div>
-
       <div className="grid h-[calc(100%-8rem)] grid-cols-3 gap-5">
         {Array.from({ length: 3 }).map((_, index) => (
           <div key={index} className="gt-skeleton h-full rounded-[32px]" />
@@ -59,6 +57,7 @@ function FeaturedVehiclesSkeleton({ isDesktop }: { isDesktop: boolean }) {
 export default function FeaturedVehicles() {
   const { featuredVehicles, error, isLoading } = useVehicles();
   const router = useRouter();
+  const t = useTranslations("FeaturedVehicles");
   const stickyRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -101,18 +100,10 @@ export default function FeaturedVehicles() {
             scrub: 0.3,
             invalidateOnRefresh: true,
             fastScrollEnd: true,
-            onEnter: () => {
-              track.style.willChange = "transform";
-            },
-            onLeave: () => {
-              track.style.willChange = "auto";
-            },
-            onEnterBack: () => {
-              track.style.willChange = "transform";
-            },
-            onLeaveBack: () => {
-              track.style.willChange = "auto";
-            },
+            onEnter: () => { track.style.willChange = "transform"; },
+            onLeave: () => { track.style.willChange = "auto"; },
+            onEnterBack: () => { track.style.willChange = "transform"; },
+            onLeaveBack: () => { track.style.willChange = "auto"; },
             onUpdate: (self) => {
               const active = Math.min(count - 1, Math.floor(self.progress * count));
               dotsRef.current.forEach((dot, index) => {
@@ -145,7 +136,6 @@ export default function FeaturedVehicles() {
 
   const handleMobileScroll = (direction: "left" | "right") => {
     if (!mobileTrackRef.current) return;
-
     const track = mobileTrackRef.current;
     const scrollAmount = track.offsetWidth;
     const targetScroll =
@@ -153,17 +143,13 @@ export default function FeaturedVehicles() {
         ? track.scrollLeft + scrollAmount
         : track.scrollLeft - scrollAmount;
 
-    gsap.to(track, {
-      scrollLeft: targetScroll,
-      duration: 0.6,
-      ease: "power2.inOut",
-    });
+    gsap.to(track, { scrollLeft: targetScroll, duration: 0.6, ease: "power2.inOut" });
   };
 
   const count = featuredVehicles.length;
 
   if (isLoading) {
-    return <FeaturedVehiclesSkeleton isDesktop={isDesktop} />;
+    return <FeaturedVehiclesSkeleton isDesktop={isDesktop} eyebrow={t("eyebrow")} />;
   }
 
   if (error || count === 0) {
@@ -171,13 +157,13 @@ export default function FeaturedVehicles() {
       <section className="w-full px-6 md:px-16 py-20" style={{ backgroundColor: "var(--bg-page)" }}>
         <div className="max-w-[960px] mx-auto rounded-[32px] border p-10 md:p-14" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
           <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-            FEATURED VEHICLES
+            {t("eyebrow")}
           </span>
           <h2 className="font-display font-bold tracking-tight text-3xl md:text-5xl mb-4" style={{ color: "var(--text-primary)" }}>
-            The live showroom is warming back up.
+            {t("errorTitle")}
           </h2>
           <p className="max-w-2xl font-normal text-base md:text-lg" style={{ color: "var(--text-secondary)" }}>
-            Inventory data could not be loaded from the local API feed. Once the backend responds again, this section will repopulate automatically.
+            {t("errorBody")}
           </p>
         </div>
       </section>
@@ -188,13 +174,11 @@ export default function FeaturedVehicles() {
     return (
       <section className="relative w-full bg-black py-8">
         <div className="px-6 pt-6 pb-6 z-20">
-          <span className="eyebrow mb-3">
-            FEATURED VEHICLES
-          </span>
+          <span className="eyebrow mb-3">{t("eyebrow")}</span>
           <h2 className="font-display text-2xl text-white leading-tight tracking-[-0.06em]">
-            Handpicked.
+            {t("heading1")}
             <br />
-            Fresh from the live feed.
+            {t("heading2")}
           </h2>
         </div>
 
@@ -236,16 +220,16 @@ export default function FeaturedVehicles() {
                       {car.model}
                     </h3>
                     <p className="font-drama italic text-lg text-white/75 mb-3">
-                      &quot;{getVehicleTagline(car)}&quot;
+                      &quot;{car.description?.trim() || t("taglineFallback", { color: car.color })}&quot;
                     </p>
                     <div className="font-mono text-sm font-medium text-white mb-3">
-                      {formatVehiclePrice(car.price)}
+                      {formatVehiclePrice(car.price, t("priceOnRequest"))}
                     </div>
                     <button
                       className="luxury-button luxury-button--accent min-h-0 px-5 py-2 text-[0.68rem]"
                       onClick={(event) => { event.stopPropagation(); router.push(`/inventory?view=${car.id}`); }}
                     >
-                      More Details
+                      {t("moreDetails")}
                       <FiArrowUpRight size={14} />
                     </button>
                   </div>
@@ -286,12 +270,12 @@ export default function FeaturedVehicles() {
         className="absolute top-0 left-0 w-full z-20 px-6 md:px-16 pt-14 pointer-events-none"
       >
         <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-          FEATURED VEHICLES
+          {t("eyebrow")}
         </span>
         <h2 className="font-display font-bold tracking-tight text-4xl md:text-[3.5vw] text-white leading-tight drop-shadow-md">
-          Handpicked.
+          {t("heading1")}
           <br />
-          Fresh from the live feed.
+          {t("heading2")}
         </h2>
       </div>
 
@@ -299,14 +283,9 @@ export default function FeaturedVehicles() {
         {Array.from({ length: count }).map((_, index) => (
           <span
             key={index}
-            ref={(element) => {
-              dotsRef.current[index] = element;
-            }}
+            ref={(element) => { dotsRef.current[index] = element; }}
             className="h-[5px] rounded-full bg-white"
-            style={{
-              width: index === 0 ? "28px" : "6px",
-              opacity: index === 0 ? 1 : 0.35,
-            }}
+            style={{ width: index === 0 ? "28px" : "6px", opacity: index === 0 ? 1 : 0.35 }}
           />
         ))}
       </div>
@@ -343,10 +322,10 @@ export default function FeaturedVehicles() {
                   {car.model}
                 </h3>
                 <p className="font-drama italic text-2xl md:text-3xl text-white/75 mb-6">
-                  &quot;{getVehicleTagline(car)}&quot;
+                  &quot;{car.description?.trim() || t("taglineFallback", { color: car.color })}&quot;
                 </p>
                 <div className="font-mono text-xl font-medium text-white">
-                  {formatVehiclePrice(car.price)}
+                  {formatVehiclePrice(car.price, t("priceOnRequest"))}
                 </div>
               </div>
 
@@ -355,7 +334,7 @@ export default function FeaturedVehicles() {
                   className="luxury-button luxury-button--accent"
                   onClick={() => router.push(`/inventory?view=${car.id}`)}
                 >
-                  More Details
+                  {t("moreDetails")}
                   <FiArrowUpRight size={16} />
                 </button>
               </div>

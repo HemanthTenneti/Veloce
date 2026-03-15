@@ -60,7 +60,8 @@ export const getVehiclesController = async (
       filters.maxMileage = parseInt(req.query.maxMileage as string, 10);
     }
 
-    const result = await getVehiclesService(filters);
+    const locale = typeof req.query.locale === "string" ? req.query.locale : "en";
+    const result = await getVehiclesService(filters, locale);
 
     if (result.success) {
       const response: ApiResponse<Vehicle[]> = {

@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { FiRotateCcw } from "react-icons/fi";
 
-// Exported so page.tsx can use the filter predicates — single source of truth
+// Exported so page.tsx can use the filter predicates — single source of truth.
+// Labels here are English fallbacks only; display labels come from translations.
 export const PRICE_OPTIONS: {
   label: string;
   value: string;
   filter: (p: number | null | undefined) => boolean;
 }[] = [
-  { label: "Under £100K",   value: "under-100k", filter: (p) => p != null && p < 100_000 },
-  { label: "£100K – £150K", value: "100k-150k",  filter: (p) => p != null && p >= 100_000 && p < 150_000 },
-  { label: "Over £150K",    value: "over-150k",  filter: (p) => p != null && p >= 150_000 },
+  { label: "Under $100K",   value: "under-100k", filter: (p) => p != null && p < 100_000 },
+  { label: "$100K – $150K", value: "100k-150k",  filter: (p) => p != null && p >= 100_000 && p < 150_000 },
+  { label: "Over $150K",    value: "over-150k",  filter: (p) => p != null && p >= 150_000 },
 ];
 
+// Values are stable identifiers used for sort logic in page.tsx
 export const SORT_OPTIONS: { label: string; value: string }[] = [
   { label: "Newest",            value: "newest"     },
   { label: "Price: Low → High", value: "price-asc"  },
@@ -48,8 +51,40 @@ type DropdownKey = keyof FilterState | "sort" | null;
 export default function FilterBar({ filters, onFilter, onClear, options, sort, onSort }: FilterBarProps) {
   const [openDropdown, setOpenDropdown] = useState<DropdownKey>(null);
   const barRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations("FilterBar");
 
-  // Close dropdown on outside click — listener active only while a dropdown is open
+  // Stable mappings from value → translation key
+  const sortKeyMap: Record<string, string> = {
+    newest:      "sortNewest",
+    "price-asc":  "sortPriceAsc",
+    "price-desc": "sortPriceDesc",
+    "year-desc":  "sortYearDesc",
+    "year-asc":   "sortYearAsc",
+  } as const;
+
+  const priceKeyMap: Record<string, string> = {
+    "under-100k": "priceUnder100k",
+    "100k-150k":  "price100k150k",
+    "over-150k":  "priceOver150k",
+  };
+
+  const anyKeyMap: Record<keyof FilterState, string> = {
+    make:  "anyMake",
+    year:  "anyYear",
+    color: "anyColor",
+    price: "anyPrice",
+  };
+
+  const getTranslatedPriceLabel = (value: string): string => {
+    const key = priceKeyMap[value];
+    return key ? t(key as any) : value;
+  };
+
+  const getTranslatedSortLabel = (value: string): string => {
+    const key = sortKeyMap[value];
+    return key ? t(key) : value;
+  };
+
   useEffect(() => {
     if (!openDropdown) return;
     const onPointerDown = (e: PointerEvent) => {
@@ -72,22 +107,42 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
 
   const hasAnyFilter = Object.values(filters).some(Boolean);
 
-  // Each def carries its own items — adding a fifth filter only requires one entry here
   const filterDefs = useMemo(() => [
-    { key: "make"  as keyof FilterState, name: "Make",  items: options.makes.map((m) => ({ label: m, value: m })) },
-    { key: "year"  as keyof FilterState, name: "Year",  items: options.years.map((y) => ({ label: y, value: y })) },
-    { key: "color" as keyof FilterState, name: "Color", items: options.colors.map((c) => ({ label: c, value: c })) },
-    { key: "price" as keyof FilterState, name: "Price", items: PRICE_OPTIONS },
-  ], [options]);
+    {
+      key: "make"  as keyof FilterState,
+      name: t("make"),
+      anyLabel: t("anyMake"),
+      items: options.makes.map((m) => ({ label: m, value: m })),
+    },
+    {
+      key: "year"  as keyof FilterState,
+      name: t("year"),
+      anyLabel: t("anyYear"),
+      items: options.years.map((y) => ({ label: y, value: y })),
+    },
+    {
+      key: "color" as keyof FilterState,
+      name: t("color"),
+      anyLabel: t("anyColor"),
+      items: options.colors.map((c) => ({ label: c, value: c })),
+    },
+    {
+      key: "price" as keyof FilterState,
+      name: t("price"),
+      anyLabel: t("anyPrice"),
+      items: PRICE_OPTIONS.map((o) => ({ label: getTranslatedPriceLabel(o.value), value: o.value })),
+    },
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ], [options, t]);
 
   const getPillLabel = (key: keyof FilterState, name: string): string => {
     const val = filters[key];
     if (!val) return name;
-    if (key === "price") return PRICE_OPTIONS.find((o) => o.value === val)?.label ?? name;
+    if (key === "price") return getTranslatedPriceLabel(val);
     return val;
   };
 
-  const sortLabel = SORT_OPTIONS.find((o) => o.value === sort)?.label ?? "Newest";
+  const sortLabel = getTranslatedSortLabel(sort);
   const isSortOpen = openDropdown === "sort";
 
   return (
@@ -111,7 +166,7 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
             }}
           >
             <FiRotateCcw size={12} />
-            Clear Filters
+            {t("clearFilters")}
           </button>
 
           <div
@@ -120,7 +175,7 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
             aria-hidden="true"
           />
 
-          {filterDefs.map(({ key, name, items }) => {
+          {filterDefs.map(({ key, name, anyLabel, items }) => {
             const isActive = Boolean(filters[key]);
             const isOpen = openDropdown === key;
 
@@ -141,10 +196,7 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
                   <Icon
                     icon="solar:alt-arrow-down-linear"
                     width={14}
-                    style={{
-                      transform: isOpen ? "rotate(180deg)" : "none",
-                      transition: "transform 0.18s ease",
-                    }}
+                    style={{ transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.18s ease" }}
                   />
                 </button>
 
@@ -167,7 +219,7 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
                         className="w-full px-4 py-2 text-left font-mono text-[10px] tracking-[0.18em] uppercase transition-colors hover:bg-white/5"
                         style={{ color: !filters[key] ? "var(--text-primary)" : "var(--text-muted)" }}
                       >
-                        Any {name}
+                        {anyLabel}
                       </button>
                     </li>
                     {items.map((item) => (
@@ -179,10 +231,7 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
                           data-testid={`filter-${key}-${item.value}`}
                           className="w-full px-4 py-2 text-left font-mono text-[10px] tracking-[0.18em] uppercase transition-colors hover:bg-white/5"
                           style={{
-                            color:
-                              filters[key] === item.value
-                                ? "var(--text-primary)"
-                                : "var(--text-secondary)",
+                            color: filters[key] === item.value ? "var(--text-primary)" : "var(--text-secondary)",
                           }}
                         >
                           {item.label}
@@ -201,11 +250,11 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
 
         {/* RIGHT — sort (top row on mobile, right side on desktop) */}
         <div className="order-first md:order-last flex items-center justify-between md:justify-start w-full md:w-auto md:ml-auto gap-3">
-          {/* Clear Filters — mobile only (desktop version is in the pills group above) */}
+          {/* Clear Filters — mobile only */}
           <button
             onClick={onClear}
             disabled={!hasAnyFilter}
-            aria-label="Clear filters"
+            aria-label={t("clearFilters")}
             className="md:hidden inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.22em] uppercase transition-opacity"
             style={{
               color: hasAnyFilter ? "var(--text-primary)" : "var(--text-muted)",
@@ -213,7 +262,7 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
             }}
           >
             <FiRotateCcw size={12} />
-            Clear Filters
+            {t("clearFilters")}
           </button>
           <div className="relative">
             <button
@@ -224,14 +273,11 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
               aria-expanded={isSortOpen}
               aria-haspopup="listbox"
             >
-              Sort: {sortLabel}
+              {t("sort")}: {sortLabel}
               <Icon
                 icon="solar:alt-arrow-down-linear"
                 width={14}
-                style={{
-                  transform: isSortOpen ? "rotate(180deg)" : "none",
-                  transition: "transform 0.18s ease",
-                }}
+                style={{ transform: isSortOpen ? "rotate(180deg)" : "none", transition: "transform 0.18s ease" }}
               />
             </button>
 
@@ -253,11 +299,9 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
                       onClick={() => { onSort(option.value); setOpenDropdown(null); }}
                       data-testid={`sort-${option.value}`}
                       className="w-full px-4 py-2 text-left font-mono text-[10px] tracking-[0.18em] uppercase transition-colors hover:bg-white/5"
-                      style={{
-                        color: sort === option.value ? "var(--text-primary)" : "var(--text-secondary)",
-                      }}
+                      style={{ color: sort === option.value ? "var(--text-primary)" : "var(--text-secondary)" }}
                     >
-                      {option.label}
+                      {getTranslatedSortLabel(option.value)}
                       {sort === option.value && (
                         <span className="ml-2 opacity-70">✓</span>
                       )}
