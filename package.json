@@ -1,0 +1,22 @@
+{
+  "name": "veloce-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "npm@11.6.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n api,web -c cyan,magenta \"npm:dev:api\" \"npm:dev:web\"",
+    "dev:api": "npm run dev -w @veloce/api",
+    "dev:web": "npm run dev -w @veloce/web",
+    "build": "npm run build --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "concurrently": "^9.2.1"
+  }
+}

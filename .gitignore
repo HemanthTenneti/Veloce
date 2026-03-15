@@ -3,11 +3,29 @@
 .env.local
 .env.*.local
 
-# Archives
-backend.zip
+# Stray image/media files inadvertently placed at repository root
+/*.jpg
+/*.jpeg
+/*.png
+/*.webp
+/*.avif
+/*.mp4
+/*.mov
+
+# Playwright output
+test-results/
 
 # macOS
 .DS_Store
 
 # Logs
 *.log
+
+# Archives
+*.zip
+
+# AI orchestration source of truth (workflow docs, specs, screenshots)
+.ai-workflow/
+
+# Dependencies
+node_modules

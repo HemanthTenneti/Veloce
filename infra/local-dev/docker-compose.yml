@@ -1,0 +1,138 @@
+# Veloce — Local Development Infrastructure
+# Full Frappe ERP stack: MariaDB, Redis, Frappe workers, Nginx proxy.
+#
+# USAGE:
+#   Start:         docker compose up -d
+#   Stop:          docker compose down
+#   Destroy all:   docker compose down -v   (removes volumes and all data)
+#
+# After starting, run create-site.sh once to provision the Frappe site.
+
+x-customizable-image: &customizable_image
+  image: frappe/erpnext:${FRAPPE_VERSION:-v16.9.0}
+  pull_policy: ${PULL_POLICY:-missing}
+  restart: unless-stopped
+
+x-depends-on-configurator: &depends_on_configurator
+  depends_on:
+    configurator:
+      condition: service_completed_successfully
+
+x-backend-defaults: &backend_defaults
+  <<: [*depends_on_configurator, *customizable_image]
+  platform: linux/amd64
+  volumes:
+    - sites:/home/frappe/frappe-bench/sites
+
+services:
+  # -- Database -------------------------------------------------------------------
+  db:
+    image: mariadb:11.8
+    restart: unless-stopped
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --skip-innodb-read-only-compressed
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-admin}
+      MARIADB_AUTO_UPGRADE: 1
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # -- Redis ----------------------------------------------------------------------
+  redis-cache:
+    image: redis:6.2-alpine
+    restart: unless-stopped
+
+  redis-queue:
+    image: redis:6.2-alpine
+    restart: unless-stopped
+    volumes:
+      - redis-queue-data:/data
+
+  # -- Frappe Configurator (runs once on stack startup) ---------------------------
+  configurator:
+    <<: *backend_defaults
+    restart: on-failure
+    entrypoint:
+      - bash
+      - -c
+    command:
+      - >
+        ls -1 apps > sites/apps.txt;
+        bench set-config -g db_host db;
+        bench set-config -gp db_port 3306;
+        bench set-config -g redis_cache "redis://redis-cache:6379";
+        bench set-config -g redis_queue "redis://redis-queue:6379";
+        bench set-config -g redis_socketio "redis://redis-queue:6379";
+        bench set-config -gp socketio_port 9000;
+    depends_on:
+      db:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
+
+  # -- Frappe Backend (Gunicorn) --------------------------------------------------
+  backend:
+    <<: *backend_defaults
+
+  # -- Frappe WebSocket -----------------------------------------------------------
+  websocket:
+    <<: [*depends_on_configurator, *customizable_image]
+    platform: linux/amd64
+    command:
+      - node
+      - /home/frappe/frappe-bench/apps/frappe/socketio.js
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+
+  # -- Frappe Workers -------------------------------------------------------------
+  queue-short:
+    <<: *backend_defaults
+    command: bench worker --queue short,default
+
+  queue-long:
+    <<: *backend_defaults
+    command: bench worker --queue long,default,short
+
+  # -- Frappe Scheduler -----------------------------------------------------------
+  scheduler:
+    <<: *backend_defaults
+    command: bench schedule
+
+  # -- Nginx Proxy (exposes Frappe at http://localhost:8080) ----------------------
+  frontend:
+    <<: *customizable_image
+    platform: linux/amd64
+    command:
+      - nginx-entrypoint.sh
+    environment:
+      BACKEND: backend:8000
+      SOCKETIO: websocket:9000
+      FRAPPE_SITE_NAME_HEADER: ${FRAPPE_SITE_NAME_HEADER:-$$host}
+      UPSTREAM_REAL_IP_ADDRESS: 127.0.0.1
+      UPSTREAM_REAL_IP_HEADER: X-Forwarded-For
+      UPSTREAM_REAL_IP_RECURSIVE: "off"
+      PROXY_READ_TIMEOUT: 120
+      CLIENT_MAX_BODY_SIZE: 50m
+    ports:
+      - "${HTTP_PUBLISH_PORT:-8080}:8080"
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+    depends_on:
+      - backend
+      - websocket
+
+volumes:
+  sites:
+  db-data:
+  redis-queue-data:
