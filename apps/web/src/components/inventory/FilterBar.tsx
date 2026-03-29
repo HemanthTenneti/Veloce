@@ -12,9 +12,9 @@ export const PRICE_OPTIONS: {
   value: string;
   filter: (p: number | null | undefined) => boolean;
 }[] = [
-  { label: "Under $100K",   value: "under-100k", filter: (p) => p != null && p < 100_000 },
-  { label: "$100K – $150K", value: "100k-150k",  filter: (p) => p != null && p >= 100_000 && p < 150_000 },
-  { label: "Over $150K",    value: "over-150k",  filter: (p) => p != null && p >= 150_000 },
+  { label: "Under ₹50L",   value: "under-50l", filter: (p) => p != null && p < 5_000_000 },
+  { label: "₹50L – ₹75L", value: "50l-75l",  filter: (p) => p != null && p >= 5_000_000 && p < 7_500_000 },
+  { label: "Over ₹75L",    value: "over-75l",  filter: (p) => p != null && p >= 7_500_000 },
 ];
 
 // Values are stable identifiers used for sort logic in page.tsx
@@ -63,9 +63,9 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
   } as const;
 
   const priceKeyMap: Record<string, string> = {
-    "under-100k": "priceUnder100k",
-    "100k-150k":  "price100k150k",
-    "over-150k":  "priceOver150k",
+    "under-50l": "priceUnder50l",
+    "50l-75l":  "price50l75l",
+    "over-75l":  "priceOver75l",
   };
 
   const anyKeyMap: Record<keyof FilterState, string> = {

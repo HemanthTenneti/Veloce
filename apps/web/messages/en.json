@@ -89,10 +89,10 @@
     "sortPriceAsc": "Price: Low → High",
     "sortPriceDesc": "Price: High → Low",
     "sortYearDesc": "Year: New → Old",
-    "sortYearAsc": "Year: Old → New",
-    "priceUnder100k": "Under $100K",
-    "price100k150k": "$100K – $150K",
-    "priceOver150k": "Over $150K"
+     "sortYearAsc": "Year: Old → New",
+     "priceUnder50l": "Under ₹50L",
+     "price50l75l": "₹50L – ₹75L",
+     "priceOver75l": "Over ₹75L"
   },
   "VehicleGrid": {
     "liveInventory": "LIVE INVENTORY",

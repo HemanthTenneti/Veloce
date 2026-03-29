@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { FiX, FiArrowUpRight, FiCheck } from "react-icons/fi";
 import gsap from "gsap";
 import { z } from "zod";
-import { API_BASE_URL } from "@/lib/vehicleApi";
 import type { Vehicle } from "@/types/vehicle";
 
 // Error field values are translation key names — translated at display time
@@ -15,7 +14,7 @@ const enquirySchema = z.object({
   lastName: z.string().min(1, "validationRequired"),
   email: z.string().email("validationEmail"),
   phone: z.string().regex(
-    /^\+1[\s.\-]?\(?\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}$/,
+    /^\+91[\s.\-]?\d{5}[\s.\-]?\d{5}$/,
     "validationPhone",
   ),
   vehicleProperties: z.string().min(1),
@@ -27,7 +26,7 @@ interface EnquiryModalProps {
   onClose: () => void;
 }
 
-const EMPTY_FORM = { firstName: "", lastName: "", email: "", phone: "+1 ", message: "" };
+const EMPTY_FORM = { firstName: "", lastName: "", email: "", phone: "+91 ", message: "" };
 
 export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -91,7 +90,7 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    const sanitized = name === "phone" && !value.startsWith("+1") ? "+1 " + value.replace(/^\+?1?\s*/, "") : value;
+    const sanitized = name === "phone" && !value.startsWith("+91") ? "+91 " + value.replace(/^\+?91?\s*/, "") : value;
     setFormData((prev) => ({ ...prev, [name]: sanitized }));
     if (errors[name]) setErrors((prev) => { const next = { ...prev }; delete next[name]; return next; });
   };
@@ -116,15 +115,16 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/leads`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
+      // Simulate API call for demo purposes (no backend)
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
+      // Log the enquiry data to console for demonstration
+      console.log("Vehicle Enquiry Submitted:", {
+        ...result.data,
+        vehicle: vehicleLabel,
+        timestamp: new Date().toISOString(),
       });
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(body?.error ?? "submissionFailed");
-      }
+      
       setIsSuccess(true);
     } catch (err) {
       setErrors({ form: err instanceof Error ? err.message : "submissionFailed" });
@@ -187,9 +187,9 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
 
         <div className="px-5 pb-5 pt-5 sm:px-8 sm:pb-8 sm:pt-8">
           <div className="mb-7">
-            <span className="font-mono text-[10px] tracking-[0.28em] uppercase" style={{ color: "var(--veloce-red, #CC0000)" }}>
-              {t("eyebrow")}
-            </span>
+           <span className="font-mono text-[10px] tracking-[0.28em] uppercase" style={{ color: "var(--veloce-red, #ff8c00)" }}>
+               {t("eyebrow")}
+             </span>
             <h2 className="mt-2 font-display text-2xl tracking-[-0.055em] leading-tight" style={{ color: "var(--text-primary)" }}>
               {t("heading")}
             </h2>
@@ -204,7 +204,7 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                 className="flex h-14 w-14 items-center justify-center rounded-full"
                 style={{ backgroundColor: "rgba(204,0,0,0.12)", border: "1px solid rgba(204,0,0,0.3)" }}
               >
-                <FiCheck size={22} style={{ color: "#CC0000" }} />
+                 <FiCheck size={22} style={{ color: "#ff8c00" }} />
               </div>
               <div>
                 <p className="font-display text-xl tracking-tight" style={{ color: "var(--text-primary)" }}>
@@ -256,7 +256,7 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                   value={formData.phone}
                   error={errors.phone ? te(errors.phone) : undefined}
                   onChange={handleChange}
-                  placeholder="+1 (555) 555-5555"
+                  placeholder="+91 98765 43210"
                 />
               </div>
 
@@ -281,18 +281,18 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                     color: "var(--text-primary)",
                   }}
                 />
-                {errors.message && (
-                  <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#CC0000" }}>
-                    {te(errors.message)}
-                  </p>
-                )}
+                 {errors.message && (
+                   <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#ff8c00" }}>
+                     {te(errors.message)}
+                   </p>
+                 )}
               </div>
 
-              {errors.form && (
-                <p className="mt-3 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#CC0000" }}>
-                  {te(errors.form)}
-                </p>
-              )}
+               {errors.form && (
+                 <p className="mt-3 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#ff8c00" }}>
+                   {te(errors.form)}
+                 </p>
+               )}
 
               <button
                 type="submit"
@@ -349,11 +349,11 @@ function FieldGroup({ id, label, value, error, onChange, placeholder, type = "te
           color: "var(--text-primary)",
         }}
       />
-      {error && (
-        <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#CC0000" }}>
-          {error}
-        </p>
-      )}
+       {error && (
+         <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#ff8c00" }}>
+           {error}
+         </p>
+       )}
     </div>
   );
 }

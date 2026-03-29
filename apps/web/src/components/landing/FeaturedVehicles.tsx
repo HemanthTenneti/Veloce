@@ -18,9 +18,9 @@ function FeaturedVehiclesSkeleton({ isDesktop, eyebrow }: { isDesktop: boolean; 
     return (
       <section className="relative w-full py-8" style={{ backgroundColor: "#050505" }}>
         <div className="px-6 pt-6 pb-6 z-20">
-          <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-            {eyebrow}
-          </span>
+           <span className="font-mono text-xs text-[#ff8c00] tracking-[0.15em] block mb-3">
+             {eyebrow}
+           </span>
           <div className="gt-skeleton h-8 w-48 rounded-full mb-3" />
           <div className="gt-skeleton h-8 w-56 rounded-full" />
         </div>
@@ -39,9 +39,9 @@ function FeaturedVehiclesSkeleton({ isDesktop, eyebrow }: { isDesktop: boolean; 
       style={{ height: "100vh", backgroundColor: "#050505" }}
     >
       <div className="mb-10">
-        <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-          {eyebrow}
-        </span>
+         <span className="font-mono text-xs text-[#ff8c00] tracking-[0.15em] block mb-3">
+           {eyebrow}
+         </span>
         <div className="gt-skeleton h-10 w-64 rounded-full mb-4" />
         <div className="gt-skeleton h-10 w-72 rounded-full" />
       </div>
@@ -156,9 +156,9 @@ export default function FeaturedVehicles() {
     return (
       <section className="w-full px-6 md:px-16 py-20" style={{ backgroundColor: "var(--bg-page)" }}>
         <div className="max-w-[960px] mx-auto rounded-[32px] border p-10 md:p-14" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
-          <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-            {t("eyebrow")}
-          </span>
+           <span className="font-mono text-xs text-[#ff8c00] tracking-[0.15em] block mb-3">
+             {t("eyebrow")}
+           </span>
           <h2 className="font-display font-bold tracking-tight text-3xl md:text-5xl mb-4" style={{ color: "var(--text-primary)" }}>
             {t("errorTitle")}
           </h2>
@@ -222,8 +222,21 @@ export default function FeaturedVehicles() {
                     <p className="font-drama italic text-lg text-white/75 mb-3">
                       &quot;{car.description?.trim() || t("taglineFallback", { color: car.color })}&quot;
                     </p>
-                    <div className="font-mono text-sm font-medium text-white mb-3">
-                      {formatVehiclePrice(car.price, t("priceOnRequest"))}
+                    <div className="mb-3">
+                      {car.marketPrice && car.carstreetPrice ? (
+                        <div className="flex flex-col gap-0.5">
+                          <div className="font-mono text-xs text-white/50 line-through">
+                            {car.marketPrice}
+                          </div>
+                          <div className="font-mono text-sm font-medium text-white">
+                            {car.carstreetPrice}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="font-mono text-sm font-medium text-white">
+                          {formatVehiclePrice(car.price, t("priceOnRequest"))}
+                        </div>
+                      )}
                     </div>
                     <button
                       className="luxury-button luxury-button--accent min-h-0 px-5 py-2 text-[0.68rem]"
@@ -269,9 +282,9 @@ export default function FeaturedVehicles() {
         ref={headerRef}
         className="absolute top-0 left-0 w-full z-20 px-6 md:px-16 pt-14 pointer-events-none"
       >
-        <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
-          {t("eyebrow")}
-        </span>
+         <span className="font-mono text-xs text-[#ff8c00] tracking-[0.15em] block mb-3">
+           {t("eyebrow")}
+         </span>
         <h2 className="font-display font-bold tracking-tight text-4xl md:text-[3.5vw] text-white leading-tight drop-shadow-md">
           {t("heading1")}
           <br />
@@ -324,9 +337,20 @@ export default function FeaturedVehicles() {
                 <p className="font-drama italic text-2xl md:text-3xl text-white/75 mb-6">
                   &quot;{car.description?.trim() || t("taglineFallback", { color: car.color })}&quot;
                 </p>
-                <div className="font-mono text-xl font-medium text-white">
-                  {formatVehiclePrice(car.price, t("priceOnRequest"))}
-                </div>
+                {car.marketPrice && car.carstreetPrice ? (
+                  <div className="flex flex-col gap-1">
+                    <div className="font-mono text-base text-white/50 line-through">
+                      {car.marketPrice}
+                    </div>
+                    <div className="font-mono text-xl font-medium text-white">
+                      {car.carstreetPrice}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="font-mono text-xl font-medium text-white">
+                    {formatVehiclePrice(car.price, t("priceOnRequest"))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-3 shrink-0">

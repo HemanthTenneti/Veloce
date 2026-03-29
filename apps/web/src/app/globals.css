@@ -15,10 +15,10 @@
   --font-mono: "Geist Mono", monospace;
 
   /* Accent (unchanged across themes) */
-  --primary-red: #a81919;
-  --dark-red: #7f1414;
-  --hover-red: #c62626;
-  --veloce-red: #CC0000;
+  --primary-red: #ff8c00;
+  --dark-red: #e67e00;
+  --hover-red: #ffa01a;
+  --veloce-red: #ff8c00;
   --gt-silver-1: rgba(180, 186, 191, 0.18);
   --gt-silver-2: rgba(226, 231, 235, 0.28);
   --gt-silver-3: rgba(144, 150, 156, 0.12);
@@ -77,12 +77,12 @@ body {
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
   background-image:
-    radial-gradient(circle at top left, rgba(168, 25, 25, 0.12), transparent 28%),
+    radial-gradient(circle at top left, rgba(255, 140, 0, 0.12), transparent 28%),
     radial-gradient(circle at top right, rgba(236, 228, 211, 0.05), transparent 22%),
     linear-gradient(180deg, rgba(255,255,255,0.02), transparent 22%);
 }
 
-::selection { background-color: rgba(168, 25, 25, 0.85); color: white; }
+::selection { background-color: rgba(255, 140, 0, 0.85); color: white; }
 
 a,
 button {
@@ -160,15 +160,15 @@ img {
 
 .luxury-button--accent {
   color: #fcf9f2;
-  border-color: rgba(204, 0, 0, 0.38);
-  background: linear-gradient(135deg, rgba(204, 0, 0, 0.92), rgba(140, 0, 0, 0.96));
-  box-shadow: 0 4px 20px rgba(204, 0, 0, 0.18);
+  border-color: rgba(255, 140, 0, 0.38);
+  background: linear-gradient(135deg, rgba(255, 140, 0, 0.92), rgba(230, 112, 0, 0.96));
+  box-shadow: 0 4px 20px rgba(255, 140, 0, 0.18);
 }
 
 .luxury-button--accent:hover {
   border-color: rgba(252, 249, 242, 0.38);
-  background: linear-gradient(135deg, rgba(220, 20, 20, 0.97), rgba(160, 0, 0, 1));
-  box-shadow: 0 6px 28px rgba(204, 0, 0, 0.28);
+  background: linear-gradient(135deg, rgba(255, 160, 26, 0.97), rgba(242, 122, 0, 1));
+  box-shadow: 0 6px 28px rgba(255, 140, 0, 0.28);
 }
 
 .luxury-button--ghost {
@@ -208,7 +208,7 @@ img {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 14% 22%, rgba(168, 25, 25, 0.18), transparent 24%),
+    radial-gradient(circle at 14% 22%, rgba(255, 140, 0, 0.18), transparent 24%),
     radial-gradient(circle at 78% 18%, rgba(255,255,255,0.06), transparent 20%),
     linear-gradient(90deg, rgba(8,9,11,0.82) 0%, rgba(8,9,11,0.48) 42%, rgba(8,9,11,0.1) 72%, rgba(8,9,11,0.72) 100%);
 }
@@ -250,7 +250,7 @@ img {
 .nav-link { position: relative; }
 .nav-link::after {
   content: ''; position: absolute; width: 0; height: 1.5px;
-  bottom: -6px; left: 0; background: linear-gradient(90deg, rgba(244,240,232,0.85), rgba(168,25,25,0.65));
+  bottom: -6px; left: 0; background: linear-gradient(90deg, rgba(244,240,232,0.85), rgba(255,140,0,0.65));
   transition: width 0.3s ease;
 }
 .nav-link:hover::after, .nav-link.active::after { width: 100%; }
@@ -314,7 +314,7 @@ img {
 
 .inventory-card-perspective[data-expanded="false"]:hover .inventory-card-shell {
   transform: rotateX(1.4deg) rotateY(-2.25deg) translate3d(0, -6px, 0);
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.44), 0 0 0 1px rgba(204, 0, 0, 0.12), 0 0 40px rgba(204, 0, 0, 0.07);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.44), 0 0 0 1px rgba(255, 140, 0, 0.12), 0 0 40px rgba(255, 140, 0, 0.07);
 }
 
 .inventory-card-perspective[data-expanded="true"] .inventory-card-shell {

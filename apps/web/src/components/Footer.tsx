@@ -29,41 +29,41 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Centre */}
-        <div>
-          <h4 className="font-mono text-[11px] text-[#CC0000] tracking-[0.12em] mb-6 uppercase">
-            {t("navigate")}
-          </h4>
-          <ul className="space-y-3 font-mono text-sm text-white/80">
-            <li>
-              <Link href="/" className="hover:text-[#CC0000] transition-colors">
-                {t("home")}
-              </Link>
-            </li>
-            <li>
-              <Link href="/inventory" className="hover:text-[#CC0000] transition-colors">
-                {t("inventory")}
-              </Link>
-            </li>
-          </ul>
-        </div>
+         {/* Centre */}
+         <div>
+           <h4 className="font-mono text-[11px] text-[#ff8c00] tracking-[0.12em] mb-6 uppercase">
+             {t("navigate")}
+           </h4>
+           <ul className="space-y-3 font-mono text-sm text-white/80">
+             <li>
+               <Link href="/" className="hover:text-[#ff8c00] transition-colors">
+                 {t("home")}
+               </Link>
+             </li>
+             <li>
+               <Link href="/inventory" className="hover:text-[#ff8c00] transition-colors">
+                 {t("inventory")}
+               </Link>
+             </li>
+           </ul>
+         </div>
 
-        {/* Right */}
-        <div>
-          <h4 className="font-mono text-[11px] text-[#CC0000] tracking-[0.12em] mb-6 uppercase">
-            {t("getInTouch")}
-          </h4>
-          <div className="font-mono text-sm text-white space-y-3">
-            <div className="flex items-center gap-3">
-              <Icon icon="mdi:phone" width={16} className="text-[#CC0000]" />
-              <span>+1 (310) 555-0100</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <Icon icon="mdi:email" width={16} className="text-[#CC0000]" />
-              <span>showroom@veloce.co.uk</span>
-            </div>
-          </div>
-        </div>
+         {/* Right */}
+         <div>
+           <h4 className="font-mono text-[11px] text-[#ff8c00] tracking-[0.12em] mb-6 uppercase">
+             {t("getInTouch")}
+           </h4>
+           <div className="font-mono text-sm text-white space-y-3">
+             <div className="flex items-center gap-3">
+               <Icon icon="mdi:phone" width={16} className="text-[#ff8c00]" />
+               <span>+91 98765 43210</span>
+             </div>
+             <div className="flex items-center gap-3">
+               <Icon icon="mdi:email" width={16} className="text-[#ff8c00]" />
+               <span>showroom@veloce.in</span>
+             </div>
+           </div>
+         </div>
       </div>
 
       {/* Bottom Bar */}
