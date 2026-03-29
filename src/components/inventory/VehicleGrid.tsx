@@ -134,14 +134,14 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
     initialRevealTweenRef.current?.kill();
     initialRevealTweenRef.current = gsap.fromTo(
       cards,
-      { autoAlpha: 0, y: 32, willChange: "transform,opacity" },
+      { autoAlpha: 0, y: 24, willChange: "transform,opacity" },
       {
         autoAlpha: 1,
         y: 0,
-        duration: reduceMotionRef.current ? 0.01 : 0.72,
+        duration: reduceMotionRef.current ? 0.01 : 0.45,
         ease: "power3.out",
         force3D: true,
-        stagger: reduceMotionRef.current ? 0 : 0.07,
+        stagger: reduceMotionRef.current ? 0 : 0.05,
         clearProps: "opacity,transform,will-change",
       },
     );
@@ -162,7 +162,7 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
 
     const ctx = gsap.context(() => {
       Flip.from(state, {
-        duration: reduceMotionRef.current ? 0.01 : 0.9,
+        duration: reduceMotionRef.current ? 0.01 : 0.55,
         ease: "expo.inOut",
         nested: true,
         scale: false,
@@ -197,7 +197,7 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
           const targetScrollY = Math.max(cardTop - viewportOffset, 0);
 
           if (lenis && !reduceMotionRef.current) {
-            lenis.scrollTo(targetScrollY, { duration: 0.85, easing: (p: number) => 1 - Math.pow(1 - p, 4) });
+            lenis.scrollTo(targetScrollY, { duration: 0.5, easing: (p: number) => 1 - Math.pow(1 - p, 4) });
           } else {
             window.scrollTo({ top: targetScrollY, behavior: reduceMotionRef.current ? "auto" : "smooth" });
           }
@@ -219,8 +219,8 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
           });
 
           revealTimelineRef.current
-            .fromTo(detailNodes, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: reduceMotionRef.current ? 0.01 : 0.45, stagger: reduceMotionRef.current ? 0 : 0.05 })
-            .fromTo(galleryNodes, { autoAlpha: 0, y: 28, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: reduceMotionRef.current ? 0.01 : 0.55, stagger: reduceMotionRef.current ? 0 : 0.06 }, 0.12);
+            .fromTo(detailNodes, { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: reduceMotionRef.current ? 0.01 : 0.3, stagger: reduceMotionRef.current ? 0 : 0.03 })
+            .fromTo(galleryNodes, { autoAlpha: 0, y: 28, scale: 0.98 }, { autoAlpha: 1, y: 0, scale: 1, duration: reduceMotionRef.current ? 0.01 : 0.35, stagger: reduceMotionRef.current ? 0 : 0.04 }, 0.08);
 
           setGalleryReadyVehicleId(expandedVehicleId);
         },

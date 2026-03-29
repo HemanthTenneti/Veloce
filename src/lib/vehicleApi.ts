@@ -19,11 +19,10 @@ const galleryKeys = [
 ] as const satisfies ReadonlyArray<keyof Vehicle>;
 
 /**
- * Fetch vehicles - now returns hardcoded data from media folder
+ * Fetch vehicles - returns hardcoded data from media folder
+ * Returns immediately for snappy UX (no artificial delay)
  */
 export async function fetchVehicles(): Promise<Vehicle[]> {
-  // Simulate async API call with a small delay for realism
-  await new Promise((resolve) => setTimeout(resolve, 100));
   return HARDCODED_VEHICLES;
 }
 

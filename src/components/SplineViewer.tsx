@@ -1,8 +1,14 @@
 'use client';
 
 import { useRef, useCallback, useEffect, useState } from 'react';
-import Spline from '@splinetool/react-spline/next';
+import dynamic from 'next/dynamic';
 import type { Application } from '@splinetool/runtime';
+
+// Dynamically import Spline to avoid SSR issues
+const Spline = dynamic(
+  () => import('@splinetool/react-spline').then((mod) => mod.default),
+  { ssr: false, loading: () => null }
+);
 
 const SPLINE_SCENE_URL = "https://prod.spline.design/XuoQgfyw6ov3Xrld/scene.splinecode";
 

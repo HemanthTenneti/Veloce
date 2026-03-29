@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react';
 import gsap from 'gsap';
 
-const SPLINE_SCENE_URL = "https://prod.spline.design/XuoQgfyw6ov3Xrld/scene.splinecode";
-
 export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -12,47 +10,36 @@ export default function LoadingScreen() {
     let mounted = true;
     let revealTween: gsap.core.Tween | null = null;
 
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    // Minimal delay for brand impression, then fade out quickly
+    const minDisplayTime = 600;
+    const startTime = performance.now();
 
-    const preloadSpline = async () => {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
+    const revealSite = () => {
+      if (!mounted) return;
 
-        // Preload the remote spline scene
-        const response = await fetch(SPLINE_SCENE_URL, {
-          signal: controller.signal,
-          mode: 'no-cors', // Spline CDN may not support CORS
+      // Calculate remaining time to meet minimum display
+      const elapsed = performance.now() - startTime;
+      const remaining = Math.max(0, minDisplayTime - elapsed);
+
+      setTimeout(() => {
+        if (!mounted) return;
+
+        // Fast fade out for snappy feel
+        revealTween = gsap.to('.loading-screen', {
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.out',
+          onComplete: () => {
+            if (mounted) {
+              setIsLoading(false);
+            }
+          },
         });
-
-        clearTimeout(timeout);
-
-        // Wait minimum 1.5 seconds for visual effect
-        await sleep(1500);
-      } catch (error) {
-        console.warn('Spline preload skipped:', error);
-        // Still proceed after timeout even if preload fails
-        await sleep(1500);
-      }
-
-      if (!mounted) {
-        return;
-      }
-
-      // Fade out the loading screen
-      revealTween = gsap.to('.loading-screen', {
-        opacity: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-        onComplete: () => {
-          if (mounted) {
-            setIsLoading(false);
-          }
-        },
-      });
+      }, remaining);
     };
 
-    preloadSpline();
+    // Start reveal immediately - no need to preload Spline (it loads lazily)
+    revealSite();
 
     return () => {
       mounted = false;

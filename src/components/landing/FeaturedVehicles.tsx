@@ -143,7 +143,7 @@ export default function FeaturedVehicles() {
         ? track.scrollLeft + scrollAmount
         : track.scrollLeft - scrollAmount;
 
-    gsap.to(track, { scrollLeft: targetScroll, duration: 0.6, ease: "power2.inOut" });
+    gsap.to(track, { scrollLeft: targetScroll, duration: 0.35, ease: "power2.inOut" });
   };
 
   const count = featuredVehicles.length;
