@@ -2,14 +2,13 @@
 
 import { useMemo } from "react";
 import useSWR from "swr";
-import { useLocale } from "next-intl";
 import { fetchVehicles, sortVehiclesByNewest } from "@/lib/vehicleApi";
 
 export function useVehicles() {
-  const locale = useLocale();
-  const cacheKey = `vehicles-${locale}`;
+  // No locale needed - English-only app
+  const cacheKey = `vehicles-en`;
 
-  const { data, error, isLoading, mutate } = useSWR(cacheKey, () => fetchVehicles(locale), {
+  const { data, error, isLoading, mutate } = useSWR(cacheKey, () => fetchVehicles("en"), {
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
