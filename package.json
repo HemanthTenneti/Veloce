@@ -1,22 +1,19 @@
 {
-  "name": "veloce-monorepo",
+  "name": "veloce-storefront",
   "private": true,
   "version": "1.0.0",
   "packageManager": "npm@11.6.2",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/*"
   ],
   "scripts": {
     "dev": "npm run dev -w @veloce/web",
-    "dev:api": "npm run dev -w @veloce/api",
-    "dev:web": "npm run dev -w @veloce/web",
-    "build": "npm run build --workspaces --if-present",
-    "lint": "npm run lint --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "build": "npm run build -w @veloce/web",
+    "start": "npm run start -w @veloce/web",
+    "lint": "npm run lint -w @veloce/web",
+    "typecheck": "npm run typecheck -w @veloce/web"
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "concurrently": "^9.2.1"
+    "@playwright/test": "^1.58.2"
   }
 }

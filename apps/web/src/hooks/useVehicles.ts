@@ -8,7 +8,7 @@ export function useVehicles() {
   // No locale needed - English-only app
   const cacheKey = `vehicles-en`;
 
-  const { data, error, isLoading, mutate } = useSWR(cacheKey, () => fetchVehicles("en"), {
+  const { data, error, isLoading, mutate } = useSWR(cacheKey, () => fetchVehicles(), {
     revalidateOnFocus: false,
     keepPreviousData: true,
   });

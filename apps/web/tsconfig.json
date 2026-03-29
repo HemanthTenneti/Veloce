@@ -19,9 +19,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@veloce/shared": ["./../../packages/shared/src/index.ts"],
-      "@veloce/shared/*": ["./../../packages/shared/src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

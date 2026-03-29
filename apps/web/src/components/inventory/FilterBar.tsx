@@ -68,16 +68,9 @@ export default function FilterBar({ filters, onFilter, onClear, options, sort, o
     "over-75l":  "priceOver75l",
   };
 
-  const anyKeyMap: Record<keyof FilterState, string> = {
-    make:  "anyMake",
-    year:  "anyYear",
-    color: "anyColor",
-    price: "anyPrice",
-  };
-
   const getTranslatedPriceLabel = (value: string): string => {
     const key = priceKeyMap[value];
-    return key ? t(key as any) : value;
+    return key ? t(key as Parameters<typeof t>[0]) : value;
   };
 
   const getTranslatedSortLabel = (value: string): string => {

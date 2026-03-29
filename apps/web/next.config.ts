@@ -5,7 +5,6 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   output: "standalone",
-  transpilePackages: ["@veloce/shared"],
   images: {
     // Allow local images from public/media folder
     remotePatterns: [],

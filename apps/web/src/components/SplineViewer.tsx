@@ -13,17 +13,14 @@ interface SplineViewerProps {
   paused?: boolean;
 }
 
+// Check for webdriver at module level (runs once on client)
+const isWebdriver = typeof navigator !== 'undefined' && navigator.webdriver;
+
 export default function SplineViewer({ paused = false }: SplineViewerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [disableSpline, setDisableSpline] = useState(false);
-
-  useEffect(() => {
-    if (typeof navigator !== 'undefined' && navigator.webdriver) {
-      setDisableSpline(true);
-    }
-  }, []);
+  const [disableSpline] = useState(isWebdriver);
 
   const handleLoad = useCallback((splineApp: Application) => {
     appRef.current = splineApp;

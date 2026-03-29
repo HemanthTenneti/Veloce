@@ -4,12 +4,9 @@ node_modules
 
 # Build outputs
 apps/web/.next
-apps/api/dist
-packages/*/dist
 
 # Test artifacts
 test-results
-.ai-workflow/*.png
 playwright-report
 
 # Environment & secrets

@@ -20,9 +20,8 @@ const galleryKeys = [
 
 /**
  * Fetch vehicles - now returns hardcoded data from media folder
- * @param locale - Currently unused, kept for API compatibility
  */
-export async function fetchVehicles(locale = "en"): Promise<Vehicle[]> {
+export async function fetchVehicles(): Promise<Vehicle[]> {
   // Simulate async API call with a small delay for realism
   await new Promise((resolve) => setTimeout(resolve, 100));
   return HARDCODED_VEHICLES;

@@ -1,65 +1,109 @@
-# Veloce Storefront (@veloce/web)
+# Veloce Web (@veloce/web)
 
-The Next.js 15 frontend storefront for the Veloce premium automobile dealership platform. Features vehicle inventory browsing, advanced filtering, i18n support (English/Spanish), and customer enquiry management.
+The Next.js 15 storefront for the Veloce premium automobile dealership platform.
 
-## Technology Stack
+## Quick Start
 
-- **Next.js 15** (App Router with dynamic `[locale]` segment)
-- **GSAP** for smooth animations and motion
-- **Lenis** for scroll physics
-- **Tailwind CSS 4** for styling
-- **next-intl v4.8.3** for internationalization
-- **Zod** for client-side validation
-
-## Getting Started
-
-From the repository root, run:
+From the repository root:
 
 ```bash
-npm run dev:web
+npm run dev
 ```
 
-The storefront will start on **http://localhost:3000** with hot-reloading enabled.
+Or from this directory:
+
+```bash
+npm run dev
+```
+
+The storefront runs on **http://localhost:3000**.
 
 ## Project Structure
 
 ```
 src/
-├── app/
-│   ├── [locale]/            # Dynamic segment for i18n routing
-│   ├── layout.tsx           # Root layout with i18n setup
-│   └── middleware.ts        # Locale detection and routing
+├── app/                     # Next.js App Router
+│   ├── layout.tsx           # Root layout
+│   ├── page.tsx             # Home page
+│   └── inventory/           # Inventory page
 ├── components/
-│   ├── VehicleGrid.tsx      # Vehicle listing with filtering
-│   ├── EnquiryModal.tsx     # Customer enquiry form
-│   └── ...
-├── hooks/                   # Custom React hooks
-├── types/                   # TypeScript type definitions
-└── styles/                  # Global styles
+│   ├── landing/             # Home page sections
+│   │   ├── HeroSection.tsx
+│   │   ├── FeaturedVehicles.tsx
+│   │   ├── HowItWorks.tsx
+│   │   ├── InventoryCTA.tsx
+│   │   └── ReserveCTA.tsx
+│   ├── inventory/           # Inventory components
+│   │   ├── VehicleGrid.tsx
+│   │   ├── FilterBar.tsx
+│   │   ├── InventoryHeader.tsx
+│   │   └── EnquiryModal.tsx
+│   ├── Navbar.tsx
+│   ├── Footer.tsx
+│   ├── ThemeProvider.tsx
+│   ├── SmoothScrollProvider.tsx
+│   ├── LoadingScreen.tsx
+│   └── ScrollToTop.tsx
+├── hooks/
+│   ├── useVehicles.ts       # Vehicle data fetching hook
+│   └── useGsapAnimations.ts # GSAP animation utilities
+├── i18n/
+│   ├── navigation.ts        # i18n navigation helpers
+│   ├── request.ts           # Server-side i18n config
+│   └── routing.ts           # Locale routing config
+├── lib/
+│   ├── hardcodedVehicles.ts # Vehicle data source
+│   ├── vehicleApi.ts        # Vehicle data utilities
+│   └── lenisStore.ts        # Smooth scroll state
+└── types/
+    └── vehicle.ts           # TypeScript interfaces
 messages/
-├── en.json                  # English UI strings
-└── es.json                  # Spanish UI strings
+├── en.json                  # English translations
+└── es.json                  # Spanish translations
+public/
+└── media/                   # Vehicle images
 ```
 
-## Localization
+## Scripts
 
-The storefront supports English and Spanish with the following routing:
-- **English** (default): `/`, `/inventory`, etc.
-- **Spanish**: `/es`, `/es/inventory`, etc.
+| Command            | Description                  |
+| ------------------ | ---------------------------- |
+| `npm run dev`      | Start dev server (port 3000) |
+| `npm run build`    | Production build             |
+| `npm run start`    | Start production server      |
+| `npm run lint`     | Run ESLint                   |
+| `npm run typecheck`| TypeScript type checking     |
 
-All UI strings are externalized into message catalogs. Vehicle data (Make, Model, VIN, Year, Mileage) is never translated.
+## Key Features
 
-## Development Workflow
+### Internationalization
+- English (default): `/`, `/inventory`
+- Spanish: `/es`, `/es/inventory`
 
-1. **Edit components** in `src/components/` — hot reload enabled
-2. **Add translations** to `messages/en.json` and `messages/es.json`
-3. **Test locally** at http://localhost:3000
-4. **Use the bridge** at `http://localhost:5005/api/*` for API calls
+Translations are in `messages/en.json` and `messages/es.json`.
 
-For more details, see the [main README](../../README.md).
+### Animation System
+- **GSAP**: Page transitions and scroll-triggered animations
+- **Lenis**: Smooth scroll physics
 
-## Learn More
+### Vehicle Data
+Managed in `src/lib/hardcodedVehicles.ts`. Each vehicle includes:
+- Basic info (make, model, year, color)
+- Pricing (market price, carstreet price)
+- Specifications (mileage, transmission, fuel type)
+- Image gallery (up to 10 images)
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [GSAP Documentation](https://gsap.com/docs)
-- [Tailwind CSS](https://tailwindcss.com/docs)
+## Adding New Vehicles
+
+1. Add images to `public/media/{VehicleName}/`
+2. Update `src/lib/hardcodedVehicles.ts` with vehicle data
+3. Images paths should be `/media/{VehicleName}/{image}.jpeg`
+
+## Configuration Files
+
+| File                 | Purpose                        |
+| -------------------- | ------------------------------ |
+| `next.config.ts`     | Next.js configuration          |
+| `tsconfig.json`      | TypeScript configuration       |
+| `eslint.config.mjs`  | ESLint rules                   |
+| `postcss.config.mjs` | PostCSS/Tailwind configuration |
