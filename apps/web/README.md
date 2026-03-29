@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Veloce Storefront (@veloce/web)
+
+The Next.js 15 frontend storefront for the Veloce premium automobile dealership platform. Features vehicle inventory browsing, advanced filtering, i18n support (English/Spanish), and customer enquiry management.
+
+## Technology Stack
+
+- **Next.js 15** (App Router with dynamic `[locale]` segment)
+- **GSAP** for smooth animations and motion
+- **Lenis** for scroll physics
+- **Tailwind CSS 4** for styling
+- **next-intl v4.8.3** for internationalization
+- **Zod** for client-side validation
 
 ## Getting Started
 
-First, run the development server:
+From the repository root, run:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev:web
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The storefront will start on **http://localhost:3000** with hot-reloading enabled.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── [locale]/            # Dynamic segment for i18n routing
+│   ├── layout.tsx           # Root layout with i18n setup
+│   └── middleware.ts        # Locale detection and routing
+├── components/
+│   ├── VehicleGrid.tsx      # Vehicle listing with filtering
+│   ├── EnquiryModal.tsx     # Customer enquiry form
+│   └── ...
+├── hooks/                   # Custom React hooks
+├── types/                   # TypeScript type definitions
+└── styles/                  # Global styles
+messages/
+├── en.json                  # English UI strings
+└── es.json                  # Spanish UI strings
+```
+
+## Localization
+
+The storefront supports English and Spanish with the following routing:
+- **English** (default): `/`, `/inventory`, etc.
+- **Spanish**: `/es`, `/es/inventory`, etc.
+
+All UI strings are externalized into message catalogs. Vehicle data (Make, Model, VIN, Year, Mileage) is never translated.
+
+## Development Workflow
+
+1. **Edit components** in `src/components/` — hot reload enabled
+2. **Add translations** to `messages/en.json` and `messages/es.json`
+3. **Test locally** at http://localhost:3000
+4. **Use the bridge** at `http://localhost:5005/api/*` for API calls
+
+For more details, see the [main README](../../README.md).
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [GSAP Documentation](https://gsap.com/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)

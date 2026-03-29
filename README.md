@@ -1,6 +1,6 @@
-# Veloce Dealership CRM
+# Veloce Dealership Platform
 
-A full-stack monorepo CRM and public storefront for a premium automobile dealership. The system exposes a public vehicle inventory browser and enquiry form backed by a headless Frappe ERP instance.
+A modern, full-stack monorepo featuring a premium automobile dealership storefront and customer management system. The platform provides a public vehicle inventory browser, advanced filtering, and seamless customer enquiry management integrated with Frappe data engine.
 
 ## Repository Structure
 
@@ -25,9 +25,9 @@ A full-stack monorepo CRM and public storefront for a premium automobile dealers
 | Layer       | Technology                                          |
 | ----------- | --------------------------------------------------- |
 | Storefront  | Next.js 15 (App Router), GSAP, Lenis, Tailwind 4    |
-| API Bridge  | Express.js, TypeScript (NodeNext module resolution) |
+| Bridge      | Express.js, TypeScript (NodeNext module resolution) |
 | Validation  | Zod (shared schemas via @veloce/shared)             |
-| Data Engine | Frappe ERPNext v16 (Dockerized, headless)           |
+| Backend     | Frappe v16 (Dockerized, headless)                   |
 | Database    | MariaDB 11.8                                        |
 
 ---
@@ -48,17 +48,17 @@ Veloce is structured as a three-workspace monorepo. Each workspace has a single,
 | Layer | Package | Role |
 | --- | --- | --- |
 | **Storefront** | `@veloce/web` | Next.js 15 App Router with `[locale]` dynamic segment. Handles all rendering, i18n, image optimization (`next/image`), and GSAP animation. Built with `output: "standalone"` for minimal Docker images. |
-| **API Bridge** | `@veloce/api` | Thin Express.js adapter. Translates REST requests from the storefront into authenticated Frappe REST API calls. Owns no business logic; all validation delegates to `@veloce/shared`. |
+| **Bridge** | `@veloce/api` | Thin Express.js adapter. Translates REST requests from the storefront into authenticated Frappe REST API calls. Owns no business logic; all validation delegates to `@veloce/shared`. |
 | **Schema Layer** | `@veloce/shared` | Zod schemas and TypeScript interfaces shared across both apps. Uses NodeNext module resolution with `.js` extensions internally. Do not import from this package in Next.js client components (Turbopack cannot resolve NodeNext transitive imports). |
-| **Data Engine** | Frappe 16 | Vanilla Frappe (not ERPNext) running in Docker. Owns the `Vehicle Inventory` custom DocType and a `Lead` DocType with Veloce-specific custom fields (`vehicle_properties`, `message`). Exposed on port 8080 behind Nginx. |
+| **Backend** | Frappe 16 | Vanilla Frappe running in Docker. Owns the `Vehicle Inventory` custom DocType and a `Lead` DocType with Veloce-specific custom fields (`vehicle_properties`, `message`). Exposed on port 8080 behind Nginx. |
 
 ### Request Flow
 
 ```
-Browser → Next.js (3000) → Express Bridge (5005) → Frappe REST (8080) → MariaDB
+Browser → Next.js (3000) → Express Bridge (5005) → Frappe (8080) → MariaDB
 ```
 
-The storefront never calls Frappe directly. All Frappe credentials are scoped to the API bridge environment.
+The storefront never calls Frappe directly. All Frappe credentials are scoped to the bridge environment.
 
 ---
 
@@ -98,9 +98,9 @@ Make, Model, VIN, year, and numeric mileage are never translated. Only UI labels
 
 | Service       | Port | Notes                              |
 | ------------- | ---- | ---------------------------------- |
-| Frappe ERP    | 8080 | Nginx proxy in front of Gunicorn   |
-| Express API   | 5005 | Set via `PORT` in `apps/api/.env`  |
-| Next.js Web   | 3000 | Default `next dev` / `next start`  |
+| Frappe        | 8080 | Nginx proxy in front of Gunicorn   |
+| Express Bridge| 5005 | Set via `PORT` in `apps/api/.env`  |
+| Next.js Storefront | 3000 | Default `next dev` / `next start`  |
 
 ## Prerequisites
 
@@ -165,10 +165,10 @@ docker compose -f infra/local-dev/docker-compose.yml exec backend \
 
 The initializer script performs the following actions:
 
-1. Creates the `Vehicle Inventory` DocType as a custom module and physically materializes the MariaDB table by calling `frappe.db.commit()` immediately after `doc.insert()` followed by `frappe.db.updatedb()`.
-2. Adds Veloce-specific custom fields (`vehicle_properties`, `message`) to the built-in ERPNext `Lead` DocType using the Frappe Custom Field API. Each field is committed individually so the column is present before the next operation begins.
+1. Creates the `Vehicle Inventory` DocType as a custom module and materializes the MariaDB table by calling `frappe.db.commit()` immediately after `doc.insert()` followed by `frappe.db.updatedb()`.
+2. Adds Veloce-specific custom fields (`vehicle_properties`, `message`) to the built-in Frappe `Lead` DocType using the Frappe Custom Field API. Each field is committed individually so the column is present before the next operation begins.
 3. Prints a verification report confirming all expected fields exist in the database.
-4. The subsequent `bench migrate` finalizes any pending schema changes and is required before the API bridge starts.
+4. The subsequent `bench migrate` finalizes any pending schema changes and is required before the bridge starts.
 
 Expected output (abbreviated):
 
@@ -187,7 +187,7 @@ VERIFY 'Vehicle Inventory' OK  [make, model, year, color, thumbnail, ...]
 VERIFY Lead custom fields OK  [message, vehicle_properties]
 ```
 
-### Step 5. Configure the API bridge
+### Step 5. Configure the Express bridge
 
 ```bash
 cp apps/api/.env.example apps/api/.env
@@ -210,7 +210,7 @@ API keys are generated in Frappe under: Settings > My Profile > API Access > Gen
 
 ### Step 6. Start the application
 
-Start the Express API bridge and the Next.js storefront concurrently:
+Start the Express bridge and the Next.js storefront concurrently:
 
 ```bash
 npm run dev
@@ -223,14 +223,14 @@ This runs:
 To start each service individually:
 
 ```bash
-npm run dev:api   # Express API on port 5005
+npm run dev:api   # Express bridge on port 5005
 npm run dev:web   # Next.js storefront on port 3000
 ```
 
 For a production process (no file watching):
 
 ```bash
-# API bridge
+# Bridge
 npm run prod -w @veloce/api
 
 # Next.js (build first, then serve)
@@ -282,7 +282,7 @@ Done. Total Vehicle Inventory records: 9
 | ------------------------------ | ------------------------------------------ |
 | Frappe Desk                    | http://localhost:8080                      |
 | Vehicle Inventory DocType      | http://localhost:8080/app/vehicle-inventory|
-| API health check               | http://localhost:5005/api/health           |
+| Bridge health check            | http://localhost:5005/api/health           |
 | Storefront                     | http://localhost:3000                      |
 
 Confirm the `Vehicle Inventory` DocType exists in Frappe Desk and that the 9 seeded vehicles appear without SQL errors.
@@ -327,7 +327,7 @@ The Express bridge has no special build step. A minimal production Dockerfile co
 
 ## Local Development Setup
 
-For iterative development the pipeline is identical to the production pipeline above. Use `npm run dev` (Step 6) which enables hot-reloading on both the API and the storefront.
+For iterative development the pipeline is identical to the production pipeline above. Use `npm run dev` (Step 6) which enables hot-reloading on both the bridge and the storefront.
 
 ---
 
