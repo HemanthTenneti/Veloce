@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import gsap from 'gsap';
 
+const SPLINE_SCENE_URL = "https://prod.spline.design/XuoQgfyw6ov3Xrld/scene.splinecode";
+
 export default function LoadingScreen() {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -17,18 +19,18 @@ export default function LoadingScreen() {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 5000);
 
-        const response = await fetch('/retrofuturism_bg_animation.spline', {
+        // Preload the remote spline scene
+        const response = await fetch(SPLINE_SCENE_URL, {
           signal: controller.signal,
+          mode: 'no-cors', // Spline CDN may not support CORS
         });
 
         clearTimeout(timeout);
 
-        if (response.ok) {
-          // File is preloaded, wait minimum 1.5 seconds for visual effect
-          await sleep(1500);
-        }
+        // Wait minimum 1.5 seconds for visual effect
+        await sleep(1500);
       } catch (error) {
-        console.warn('Spline preload failed:', error);
+        console.warn('Spline preload skipped:', error);
         // Still proceed after timeout even if preload fails
         await sleep(1500);
       }

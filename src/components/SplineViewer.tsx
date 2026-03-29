@@ -1,13 +1,10 @@
 'use client';
 
 import { useRef, useCallback, useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
+import Spline from '@splinetool/react-spline/next';
 import type { Application } from '@splinetool/runtime';
 
-const Spline = dynamic(
-  () => import('@splinetool/react-spline').then(mod => mod.default),
-  { ssr: false, loading: () => null }
-);
+const SPLINE_SCENE_URL = "https://prod.spline.design/XuoQgfyw6ov3Xrld/scene.splinecode";
 
 interface SplineViewerProps {
   paused?: boolean;
@@ -88,7 +85,7 @@ export default function SplineViewer({ paused = false }: SplineViewerProps) {
     >
       {!disableSpline ? (
         <Spline
-          scene="/retrofuturism_bg_animation.spline"
+          scene={SPLINE_SCENE_URL}
           onLoad={handleLoad}
         />
       ) : null}
