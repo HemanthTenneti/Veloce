@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FiArrowLeft, FiArrowRight, FiArrowUpRight } from "react-icons/fi";
-import { useRouter } from "@/i18n/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";

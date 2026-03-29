@@ -22,6 +22,19 @@ export interface Vehicle {
   image10?: string | null;
   createdAt?: string | null;
   updatedAt?: string | null;
+  // New fields from JSON
+  regYear?: string | null;
+  makeYear?: string | null;
+  kmDriven?: string | null;
+  fuelType?: string | null;
+  transmission?: string | null;
+  numOwners?: string | null;
+  regState?: string | null;
+  mileageText?: string | null;
+  topSpeed?: string | null;
+  // Price fields - Indian Rupee format
+  marketPrice?: string | null;
+  carstreetPrice?: string | null;
 }
 
 export interface VehiclesListResponse {

@@ -2,37 +2,19 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link, usePathname, useRouter } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { getLenis } from "@/lib/lenisStore";
 
 export default function Navbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const navRef = useRef<HTMLElement>(null);
   const lastScrollRef = useRef(0);
   const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [locale, setLocale] = useState<string>("en");
   const t = useTranslations("Navbar");
-  const tSwitch = useTranslations("LanguageSwitcher");
 
   const isInventory = pathname === "/inventory";
-
-  // Detect current locale from URL on client
-  useEffect(() => {
-    const segments = window.location.pathname.split("/").filter(Boolean);
-    const potentialLocale = segments[0];
-    if ((routing.locales as readonly string[]).includes(potentialLocale)) {
-      setLocale(potentialLocale);
-    } else {
-      setLocale(routing.defaultLocale);
-    }
-  }, [pathname]);
-
-  const switchLocale = (nextLocale: string) => {
-    router.replace(pathname, { locale: nextLocale });
-  };
 
   useEffect(() => {
     const nav = navRef.current;
@@ -68,7 +50,6 @@ export default function Navbar() {
   }, []);
 
   const navBgClass = isInventory || scrolled ? "opacity-100" : "opacity-100";
-  const otherLocale = locale === "en" ? "es" : "en";
 
   return (
     <nav
@@ -104,14 +85,6 @@ export default function Navbar() {
             >
               {t("inventory")}
             </Link>
-            <button
-              onClick={() => switchLocale(otherLocale)}
-              className="font-mono text-[0.65rem] tracking-[0.18em] uppercase px-2 py-1 rounded border transition-colors"
-              style={{ color: "var(--text-secondary)", borderColor: "var(--border)" }}
-              aria-label={`Switch to ${tSwitch(otherLocale as "en" | "es")}`}
-            >
-              {tSwitch(otherLocale as "en" | "es")}
-            </button>
           </div>
         </div>
       </div>
@@ -144,14 +117,6 @@ export default function Navbar() {
             >
               {t("inventory")}
             </Link>
-            <button
-              onClick={() => switchLocale(otherLocale)}
-              className="font-mono text-[0.65rem] tracking-[0.22em] uppercase px-2.5 py-1 rounded border transition-colors hover:border-white/40"
-              style={{ color: "var(--text-secondary)", borderColor: "var(--border)" }}
-              aria-label={`Switch to ${tSwitch(otherLocale as "en" | "es")}`}
-            >
-              {tSwitch(otherLocale as "en" | "es")}
-            </button>
           </div>
         </div>
       </div>

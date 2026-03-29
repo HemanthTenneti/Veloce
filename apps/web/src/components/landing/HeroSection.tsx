@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+import Link from "next/link";
 import { FiArrowUpRight } from "react-icons/fi";
 import SplineViewer from "@/components/SplineViewer";
 import gsap from "gsap";
