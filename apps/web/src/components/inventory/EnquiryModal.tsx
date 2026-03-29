@@ -200,10 +200,10 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
 
           {isSuccess ? (
             <div className="flex flex-col items-center gap-4 py-10 text-center">
-              <div
-                className="flex h-14 w-14 items-center justify-center rounded-full"
-                style={{ backgroundColor: "rgba(204,0,0,0.12)", border: "1px solid rgba(204,0,0,0.3)" }}
-              >
+               <div
+                 className="flex h-14 w-14 items-center justify-center rounded-full"
+                 style={{ backgroundColor: "rgba(255,140,0,0.12)", border: "1px solid rgba(255,140,0,0.3)" }}
+               >
                  <FiCheck size={22} style={{ color: "#ff8c00" }} />
               </div>
               <div>
@@ -276,10 +276,10 @@ export default function EnquiryModal({ vehicle, onClose }: EnquiryModalProps) {
                   onChange={handleChange}
                   placeholder={t("messagePlaceholder")}
                   className="w-full resize-none rounded-2xl border bg-transparent px-4 py-3 text-sm outline-none transition-colors placeholder:text-white/25 focus:outline-none"
-                  style={{
-                    borderColor: errors.message ? "rgba(204,0,0,0.6)" : "var(--border)",
-                    color: "var(--text-primary)",
-                  }}
+                   style={{
+                     borderColor: errors.message ? "rgba(255,140,0,0.6)" : "var(--border)",
+                     color: "var(--text-primary)",
+                   }}
                 />
                  {errors.message && (
                    <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#ff8c00" }}>
@@ -344,10 +344,10 @@ function FieldGroup({ id, label, value, error, onChange, placeholder, type = "te
         onChange={onChange}
         placeholder={placeholder}
         className="w-full rounded-2xl border bg-transparent px-4 py-2.5 text-sm outline-none transition-colors placeholder:text-white/25 focus:outline-none"
-        style={{
-          borderColor: error ? "rgba(204,0,0,0.6)" : "var(--border)",
-          color: "var(--text-primary)",
-        }}
+         style={{
+           borderColor: error ? "rgba(255,140,0,0.6)" : "var(--border)",
+           color: "var(--text-primary)",
+         }}
       />
        {error && (
          <p className="mt-1 font-mono text-[9px] tracking-[0.14em] uppercase" style={{ color: "#ff8c00" }}>

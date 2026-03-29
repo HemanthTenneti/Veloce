@@ -12,7 +12,7 @@ export default function HowItWorks() {
     >
       <div className="max-w-[1440px] mx-auto px-6 md:px-12">
         <div className="mb-16">
-          <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">
+          <span className="font-mono text-xs text-[#ff8c00] tracking-[0.15em] block mb-3">
             {t("eyebrow")}
           </span>
           <h2
@@ -24,7 +24,7 @@ export default function HowItWorks() {
         </div>
 
         <div className="relative grid grid-cols-1 md:grid-cols-3 gap-6 stack-container">
-          <div className="hidden md:block absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-[#CC0000] z-0 opacity-30" />
+          <div className="hidden md:block absolute top-1/2 left-0 w-full h-[1px] border-t border-dashed border-[#ff8c00] z-0 opacity-30" />
 
           {/* Card 1 */}
           <div
@@ -32,7 +32,7 @@ export default function HowItWorks() {
             style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border)" }}
           >
             <div className="flex justify-between items-start mb-12">
-              <span className="font-mono text-xl text-[#CC0000]">01</span>
+              <span className="font-mono text-xl text-[#ff8c00]">01</span>
               <div className="w-12 h-12 relative flex items-center justify-center">
                 <svg viewBox="0 0 100 100" className="w-full h-full opacity-30">
                   <circle cx="50" cy="50" r="10" stroke="currentColor" strokeWidth="1" fill="none" className="ring-anim" style={{ animationDelay: "0s" }} />
@@ -55,13 +55,13 @@ export default function HowItWorks() {
             style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border)" }}
           >
             <div className="flex justify-between items-start mb-12">
-              <span className="font-mono text-xl text-[#CC0000]">02</span>
+              <span className="font-mono text-xl text-[#ff8c00]">02</span>
               <div className="w-16 h-12 relative flex items-center justify-center overflow-hidden">
                 <svg viewBox="0 0 100 50" className="w-full h-full">
                   <path d="M10,40 L15,25 L35,20 L65,20 L85,25 L90,40 Z" stroke="currentColor" strokeWidth="1" fill="none" className="opacity-30" />
                   <circle cx="25" cy="40" r="6" stroke="currentColor" strokeWidth="1" fill="none" className="opacity-30" />
                   <circle cx="75" cy="40" r="6" stroke="currentColor" strokeWidth="1" fill="none" className="opacity-30" />
-                  <line x1="0" y1="0" x2="0" y2="50" stroke="#CC0000" strokeWidth="1" className="animate-scan" />
+                  <line x1="0" y1="0" x2="0" y2="50" stroke="#ff8c00" strokeWidth="1" className="animate-scan" />
                 </svg>
               </div>
             </div>
@@ -79,10 +79,10 @@ export default function HowItWorks() {
             style={{ backgroundColor: "var(--bg-card)", border: "1px solid var(--border)" }}
           >
             <div className="flex justify-between items-start mb-12">
-              <span className="font-mono text-xl text-[#CC0000]">03</span>
+              <span className="font-mono text-xl text-[#ff8c00]">03</span>
               <div className="w-16 h-12 relative flex items-center justify-center">
                 <svg viewBox="0 0 100 50" className="w-full h-full">
-                  <path d="M0,25 L20,25 L30,5 L45,45 L55,15 L65,25 L100,25" stroke="#CC0000" strokeWidth="1.5" fill="none" strokeLinejoin="round" className="ekg-path" />
+                  <path d="M0,25 L20,25 L30,5 L45,45 L55,15 L65,25 L100,25" stroke="#ff8c00" strokeWidth="1.5" fill="none" strokeLinejoin="round" className="ekg-path" />
                 </svg>
               </div>
             </div>

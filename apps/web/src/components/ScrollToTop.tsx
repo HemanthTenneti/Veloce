@@ -49,7 +49,7 @@ export default function ScrollToTop() {
       ref={btnRef}
       onClick={handleClick}
       aria-label="Scroll to top"
-      className="fixed bottom-8 right-6 md:right-10 z-50 w-12 h-12 rounded-full bg-[#CC0000] hover:bg-[#FF2222] text-white flex items-center justify-center shadow-lg transition-colors duration-200"
+      className="fixed bottom-8 right-6 md:right-10 z-50 w-12 h-12 rounded-full bg-[#ff8c00] hover:bg-[#ffa01a] text-white flex items-center justify-center shadow-lg transition-colors duration-200"
       style={{ willChange: "transform, opacity" }}
     >
       <Icon icon="solar:arrow-up-linear" width={20} />

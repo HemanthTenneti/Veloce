@@ -263,7 +263,7 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
     return (
       <section className="py-16 px-6 md:px-12 w-full" style={{ backgroundColor: "var(--bg-page)" }}>
         <div className="max-w-[1440px] mx-auto rounded-[32px] border p-8 md:p-12" style={{ borderColor: "var(--border)", backgroundColor: "var(--bg-card)" }}>
-          <span className="font-mono text-xs text-[#CC0000] tracking-[0.15em] block mb-3">{t("liveInventory")}</span>
+          <span className="font-mono text-xs text-[#ff8c00] tracking-[0.15em] block mb-3">{t("liveInventory")}</span>
           <h2 className="font-display text-3xl md:text-5xl tracking-tight mb-3" style={{ color: "var(--text-primary)" }}>
             {t("errorTitle")}
           </h2>
@@ -388,10 +388,21 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
                     </span>
                   </div>
 
-                  <div className="mb-6 flex items-center justify-between gap-4">
-                    <div className="font-display text-2xl md:text-3xl tracking-[-0.05em] text-[#E0E3E6]">
-                      {formatVehiclePrice(car.price, t("priceOnRequest"))}
-                    </div>
+                  <div className="mb-6">
+                    {car.marketPrice && car.carstreetPrice ? (
+                      <div className="flex flex-col gap-1">
+                        <div className="font-mono text-sm text-[#999] line-through">
+                          {car.marketPrice}
+                        </div>
+                        <div className="font-display text-2xl md:text-3xl tracking-[-0.05em] text-[#E0E3E6]">
+                          {car.carstreetPrice}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="font-display text-2xl md:text-3xl tracking-[-0.05em] text-[#E0E3E6]">
+                        {formatVehiclePrice(car.price, t("priceOnRequest"))}
+                      </div>
+                    )}
                   </div>
 
                   {isExpanded && (
@@ -408,6 +419,69 @@ export default function VehicleGrid({ vehicles, error, isLoading, onEnquire }: V
                         {t("enquireNow")}
                         <FiArrowUpRight size={17} />
                       </button>
+
+                      {/* Vehicle Specifications Section */}
+                      <div className="mb-8" data-detail-fade>
+                        <h4 className="mb-4 font-mono text-[10px] tracking-[0.34em] uppercase" style={{ color: "#DEE3E8" }}>
+                          Vehicle Specifications
+                        </h4>
+                        <div className="grid grid-cols-2 gap-3">
+                          {car.regYear && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Registration Year</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.regYear}</div>
+                            </div>
+                          )}
+                          {car.makeYear && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Make Year</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.makeYear}</div>
+                            </div>
+                          )}
+                          {car.kmDriven && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>KM Driven</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.kmDriven} km</div>
+                            </div>
+                          )}
+                          {car.fuelType && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Fuel Type</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.fuelType}</div>
+                            </div>
+                          )}
+                          {car.transmission && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Transmission</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.transmission}</div>
+                            </div>
+                          )}
+                          {car.numOwners && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Owners</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.numOwners}</div>
+                            </div>
+                          )}
+                          {car.regState && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Reg. State</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.regState}</div>
+                            </div>
+                          )}
+                          {car.mileageText && (
+                            <div className="rounded-xl border p-3" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Mileage</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.mileageText}</div>
+                            </div>
+                          )}
+                          {car.topSpeed && (
+                            <div className="rounded-xl border p-3 col-span-2" style={{ borderColor: "rgba(255,255,255,0.1)", backgroundColor: "rgba(255,255,255,0.02)" }}>
+                              <div className="font-mono text-[9px] tracking-[0.18em] uppercase mb-1" style={{ color: "var(--text-muted)" }}>Top Speed</div>
+                              <div className="font-mono text-sm" style={{ color: "var(--text-secondary)" }}>{car.topSpeed}</div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
 
                       <div className="mt-1" data-detail-fade>
                         <h4 className="mb-5 font-mono text-[10px] tracking-[0.34em] uppercase" style={{ color: "#DEE3E8" }}>

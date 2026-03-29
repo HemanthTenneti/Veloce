@@ -11,7 +11,7 @@ export default function ReserveCTA() {
       <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
         <article
           className="group inventory-card-perspective relative overflow-hidden rounded-[28px] border"
-          style={{ borderColor: "rgba(204, 0, 0, 0.26)", backgroundColor: "rgba(204, 0, 0, 0.22)" }}
+          style={{ borderColor: "rgba(255, 140, 0, 0.26)", backgroundColor: "rgba(255, 140, 0, 0.22)" }}
         >
           <div className="inventory-card-shell relative p-10 md:p-12">
             <div className="inventory-card-sheen" aria-hidden="true" />
